@@ -9,7 +9,9 @@
         "compression": "^1.7.4",
         "express": "^4.17.1",
         "helmet": "^4.1.1",
-        "lightning-base-components": "^1.10.2-alpha"
+        "jsforce": "^1.11.0",
+        "lightning-base-components": "^1.10.2-alpha",
+        "sf-jwt-token": "^1.3.0"
     },
     "devDependencies": {
         "eslint": "^7.12.0",
