@@ -1,13 +1,12 @@
 <template>
-    <div class="slds-m-top_small slds-m-bottom_medium">
-        <lightning-button
-            label="Hello, World!"
-            title="Using LBC"
-            onclick={handleClick}
-            class="slds-m-left_x-small"
-        ></lightning-button>
-    </div>
-    <div class="slds-m-vertical_medium">
-        <p><span class="slds-text-heading_small">{clickedButtonLabel}</span></p>
+    Data received from SF Org:
+    <div class="slds-m-top_medium slds-m-horizontal_xx-large">
+        <lightning-datatable
+            key-field="id"
+            show-row-number-column
+            data={result}
+            columns={columns}
+        >
+        </lightning-datatable>
     </div>
 </template>
