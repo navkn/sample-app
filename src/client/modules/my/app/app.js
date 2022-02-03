@@ -17,7 +17,7 @@ export default class App extends LightningElement {
             let records = data.records;
             records.forEach((rec) => {
                 rec.SolarBotName = rec.SolarBot__r.Name;
-                rec.SolarBotName = rec.SolarBot__r.Account__r.Name;
+                rec.SolarBotAccountName = rec.SolarBot__r.Account__r.Name;
             });
             this.result = records;
         }
