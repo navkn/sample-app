@@ -3,8 +3,8 @@ import { LightningElement, wire } from 'lwc';
 import getAccountRecords from 'data/sfWire';
 const columns = [
     { label: 'SolarBot Status Name', fieldName: 'Name' },
-    { label: 'SolarBot Name', fieldName: 'SolarBotName', type: 'url' },
-    { label: 'Account Name', fieldName: 'SolarBotAccountName', type: 'phone' }
+    { label: 'SolarBot Name', fieldName: 'SolarBotName' },
+    { label: 'Account Name', fieldName: 'SolarBotAccountName' }
 ];
 export default class App extends LightningElement {
     result;
