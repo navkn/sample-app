@@ -4,7 +4,6 @@ const helmet = require('helmet');
 const express = require('express');
 const { getToken } = require('sf-jwt-token');
 const jsforce = require('jsforce');
-const path = require('path');
 
 const DIST_DIR = './dist';
 const HOST = process.env.HOST || 'localhost';
@@ -14,8 +13,6 @@ const app = express();
 
 var jwtToken;
 var conn;
-console.log('Path of dir :', path.join(DIST_DIR, '/SLDS/assets')); //      --->  dist
-console.log('Path of __dirname', path.join(__dirname, '/../dist')); // -- >  app/src/server
 establishConnectionToSF();
 
 app.use(express.static(DIST_DIR)); //appends the dist folder to the root
@@ -23,7 +20,6 @@ app.use(helmet());
 app.use(helmet({ crossOriginEmbedderPolicy: true }));
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 app.use(compression());
-//app.use('/home', express.static(DIST_DIR));
 app.get('/read', async (req, res) => {
     try {
         let results = await queryDataFromSF();
@@ -85,8 +81,10 @@ async function establishConnectionToSF() {
     }
 }
 async function queryDataFromSF() {
-    console.log('Querying for accounts');
-    let result = await conn.query('Select Id,Phone,Site,Name from Account');
+    console.log('Querying for records');
+    let result = await conn.query(
+        'select Id,Name,SolarBot__r.Name,SolarBot__r.Account__r.Name from SolarBot_Status__c order by SolarBot__r.Account__r.Name '
+    );
     return result;
 }
 
