@@ -38,7 +38,6 @@ export default class App extends LightningElement {
 
     @wire(updateDataFromSFWire, { records: this.recordsToUpdate })
     updateRecords({ data, error }) {
-        console.log('stack of data', this.recordsToUpdate);
         if (data) {
             console.log('Updated Data', data);
             this.recordsToUpdate = [];
