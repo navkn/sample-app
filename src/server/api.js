@@ -15,6 +15,7 @@ var jwtToken;
 var conn;
 establishConnectionToSF();
 
+app.use(express.json());
 app.use(express.static(DIST_DIR)); //appends the dist folder to the root
 app.use(helmet());
 app.use(helmet({ crossOriginEmbedderPolicy: true }));
@@ -33,6 +34,25 @@ app.get('/read', async (req, res) => {
 app.get('/create', async (req, res) => {
     try {
         let results = await insertIntoSF();
+        console.log('Inserted successfully', results);
+        res.json(results);
+    } catch (error) {
+        console.log('Error while inserting record', error);
+    }
+});
+
+app.post('/update', async (req, res) => {
+    try {
+        console.log(
+            'GOt request from SF',
+            req.params,
+            req.body,
+            req.headers,
+            req.query
+        );
+        const records = req.body.records;
+        const sObjectType = req.body.sObjectType;
+        const results = await updateIntoSF(records, sObjectType);
         console.log('Inserted successfully', results);
         res.json(results);
     } catch (error) {
@@ -99,6 +119,19 @@ async function insertIntoSF() {
             console.log('Created record id : ' + ret.id);
             return ret;
         });
+}
+
+async function updateIntoSF(records, sObjectType) {
+    await conn.sobject(sObjectType).update(records, (err, rets) => {
+        if (err) {
+            return console.error('Errro while updating', err);
+        }
+        for (let i = 0; i < rets.length; i++) {
+            records[rets[i].id].result =
+                rets[i].success === true ? 'success' : 'failed';
+        }
+        return records;
+    });
 }
 
 app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));

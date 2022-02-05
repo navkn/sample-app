@@ -1,6 +1,6 @@
 import { LightningElement, wire } from 'lwc';
 // eslint-disable-next-line @lwc/lwc/no-unknown-wire-adapters
-import getAccountRecords from 'data/sfWire';
+import { getDataFromSFWire, updateDataFromSFWire } from 'data/sfWire';
 const actions = [
     { label: 'Edit', name: 'edit' },
     { label: 'Delete', name: 'delete' }
@@ -15,26 +15,12 @@ const columns = [
     }
 ];
 export default class App extends LightningElement {
-    // result = {
-    //     Id: 'a002w000003Mz7WAAS',
-    //     Name: 'Naveen',
-    //     Maintenance_Requested__c:"true",
-    //     Panel_Temperature__c:"23.4",
-    //     Kilowatt_Hours__c:"1.6578342308",
-    //     SolarBot__r: {
-    //         Id: 'a002w000003Mz7WAAS',
-    //         Name: 'Kothuri',
-    //         Account__r: {
-    //             Id: 'a002w000003Mz7WAAS',
-    //             Name: 'Naveen Kothuri'
-    //         }
-    //     }
-    // };
     result;
     columns = columns;
     editRecord;
+    recordsToUpdate = [];
     // eslint-disable-next-line @lwc/lwc/no-unknown-wire-adapters
-    @wire(getAccountRecords) getRecords({ data, error }) {
+    @wire(getDataFromSFWire) getRecords({ data, error }) {
         console.log('Fetching the records');
         if (data) {
             console.log('got data', data);
@@ -47,6 +33,19 @@ export default class App extends LightningElement {
         }
         if (error) {
             console.log('got error', error);
+        }
+    }
+
+    @wire(updateDataFromSFWire, { records: this.recordsToUpdate })
+    updateRecords({ data, error }) {
+        console.log('stack of data', this.recordsToUpdate);
+        if (data) {
+            console.log('Updated Data', data);
+            this.recordsToUpdate = [];
+        }
+        if (error) {
+            console.log('Error while updating data', error);
+            this.recordsToUpdate = [];
         }
     }
     handleRowAction(event) {
@@ -72,6 +71,6 @@ export default class App extends LightningElement {
         this.editRecord = undefined;
     }
     handleSave() {
-        console.log(this.editRecord);
+        this.recordsToUpdate.push(this.editRecord);
     }
 }
