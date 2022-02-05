@@ -25,7 +25,7 @@ app.get('/read', async (req, res) => {
     try {
         let results = await queryDataFromSF();
         res.json(results);
-        console.log('Priniting the accounts: ', results);
+        console.log('Priniting the accounts: ', results.length);
     } catch (error) {
         console.log('Uncaught exception', error);
     }
@@ -33,8 +33,10 @@ app.get('/read', async (req, res) => {
 
 app.get('/create', async (req, res) => {
     try {
-        let results = await insertIntoSF();
-        console.log('Inserted successfully', results);
+        const records = req.body.records;
+        const sObjectType = req.body.sObjectType;
+        let results = await insertIntoSF(records, sObjectType);
+        console.log('Inserted successfully', results.length);
         res.json(results);
     } catch (error) {
         console.log('Error while inserting record', error);
@@ -44,7 +46,7 @@ app.get('/create', async (req, res) => {
 app.post('/update', async (req, res) => {
     try {
         console.log(
-            'GOt request from SF',
+            'Got request from SF',
             req.params,
             req.body,
             req.headers,
@@ -53,7 +55,7 @@ app.post('/update', async (req, res) => {
         const records = req.body.records;
         const sObjectType = req.body.sObjectType;
         const results = await updateIntoSF(records, sObjectType);
-        console.log('Inserted successfully', results);
+        console.log('Inserted successfully', results.length);
         res.json(results);
     } catch (error) {
         console.log('Error while inserting record', error);
@@ -74,7 +76,6 @@ async function getAccessTokenFromJWT() {
             aud: process.env.LOGIN_URL,
             privateKey: process.env.PRIVATE_KEY
         });
-        console.log('success', jwtToken);
     } catch (error) {
         console.log('N@ Got an error while getting an access token', error);
     }
@@ -89,7 +90,6 @@ async function establishConnectionToSF() {
                 jwtToken.instance_url,
                 jwtToken.access_token
             );
-            console.log('connection request is initialized');
             conn = new jsforce.Connection({
                 instanceUrl: jwtToken.instance_url,
                 accessToken: jwtToken.access_token
@@ -108,17 +108,15 @@ async function queryDataFromSF() {
     return result;
 }
 
-async function insertIntoSF() {
+async function insertIntoSF(records, sObjectType) {
     console.log('Inserting into sf');
-    await conn
-        .sobject('Account')
-        .create({ Name: 'My Account #1' }, function (err, ret) {
-            if (err || !ret.success) {
-                return console.error(err, ret);
-            }
-            console.log('Created record id : ' + ret.id);
-            return ret;
-        });
+    await conn.sobject(sObjectType).create(records, function (err, ret) {
+        if (err || !ret.success) {
+            return console.error(err, ret);
+        }
+        console.log('Created record id : ' + ret.id);
+        return ret;
+    });
 }
 
 async function updateIntoSF(records, sObjectType) {

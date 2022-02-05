@@ -9,11 +9,11 @@ export const getDataFromSF = async () => {
         options
     );
     var result = await resp.json();
-    console.log(result);
     return result;
 };
 
 export const updateDataIntoSF = async (records) => {
+    if (records.length === 0) return;
     let data = {
         records: records,
         sObjectType: 'SolarBot_Status__c'
@@ -29,7 +29,7 @@ export const updateDataIntoSF = async (records) => {
         `https://intelligent-cloud-app.herokuapp.com/update`,
         options
     );
-    var result = await resp.json();
-    console.log(result);
+    let result = await resp.json();
+    // eslint-disable-next-line consistent-return
     return result;
 };
