@@ -15,7 +15,7 @@
             </div>
             <lightning-datatable
                 if:true={result}
-                key-field="id"
+                key-field="Id"
                 show-row-number-column
                 data={result}
                 columns={columns}
@@ -51,14 +51,57 @@
                                 id="modal-heading-01"
                                 class="slds-modal__title slds-hyphenate"
                             >
-                                Edit SolarbBot Status
+                                Edit SolarbBot {editRecord.Name}
                             </h1>
                         </div>
                         <div
                             class="slds-modal__content slds-p-around_medium"
                             id="modal-content-id-1"
                         >
-                            <p>Editing the SolarBot</p>
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_6-of-12">
+                                    <lightning-input
+                                        type="text"
+                                        label="SolarBot Status Name"
+                                        value={editRecord.Name}
+                                    ></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_6-of-12">
+                                    <lightning-input
+                                        type="text"
+                                        label="SolarBot"
+                                        value={editRecord.SolarBot__r.Name}
+                                    ></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_6-of-12">
+                                    <lightning-input
+                                        type="text"
+                                        label="Panel Temp"
+                                        value={editRecord.Panel_Temperature__c}
+                                    ></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_6-of-12">
+                                    <lightning-input
+                                        type="text"
+                                        label="Kilowatt Hours"
+                                        value={editRecord.Kilowatt_Hours__c}
+                                    ></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_6-of-12">
+                                    <lightning-input
+                                        type="text"
+                                        label="SolarBot Account Name"
+                                        value={editRecord.SolarBot__r.Account__r.Name}
+                                    ></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_6-of-12">
+                                    <lightning-input
+                                        type="text"
+                                        label="Maintenance Requested"
+                                        value={editRecord.Maintenance_Requested__c}
+                                    ></lightning-input>
+                                </div>
+                            </div>
                         </div>
                         <div class="slds-modal__footer">
                             <button

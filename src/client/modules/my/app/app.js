@@ -11,22 +11,26 @@ const columns = [
     { label: 'Account Name', fieldName: 'SolarBotAccountName' },
     {
         type: 'action',
-        typeAttributes: { rowActions: actions, menuAlignment: 'left' }
+        typeAttributes: { rowActions: actions, menuAlignment: 'right' }
     }
 ];
 export default class App extends LightningElement {
-    result = {
-        Id: 'a002w000003Mz7WAAS',
-        Name: 'Naveen',
-        SolarBot__r: {
-            Id: 'a002w000003Mz7WAAS',
-            Name: 'Kothuri',
-            Account__r: {
-                Id: 'a002w000003Mz7WAAS',
-                Name: 'Naveen Kothuri'
-            }
-        }
-    };
+    // result = {
+    //     Id: 'a002w000003Mz7WAAS',
+    //     Name: 'Naveen',
+    //     Maintenance_Requested__c:"true",
+    //     Panel_Temperature__c:"23.4",
+    //     Kilowatt_Hours__c:"1.6578342308",
+    //     SolarBot__r: {
+    //         Id: 'a002w000003Mz7WAAS',
+    //         Name: 'Kothuri',
+    //         Account__r: {
+    //             Id: 'a002w000003Mz7WAAS',
+    //             Name: 'Naveen Kothuri'
+    //         }
+    //     }
+    // };
+    result;
     columns = columns;
     editRecord;
     // eslint-disable-next-line @lwc/lwc/no-unknown-wire-adapters
