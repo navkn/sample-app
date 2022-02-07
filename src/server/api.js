@@ -120,6 +120,7 @@ async function insertIntoSF(records, sObjectType) {
 }
 
 async function updateIntoSF(records, sObjectType) {
+    console.log('updating into sf', records, sObjectType);
     await conn.sobject(sObjectType).update(records, (err, rets) => {
         if (err) {
             return console.error('Errro while updating', err);

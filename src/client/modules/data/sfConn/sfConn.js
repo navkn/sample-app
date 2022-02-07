@@ -16,18 +16,20 @@ export const updateDataIntoSF = async (records) => {
     console.log('records', records);
     console.log(typeof records);
     //if (records.length === 0) return;
-    let data = {
-        records: records,
-        sObjectType: 'SolarBot_Status__c'
-    };
-    const params = data;
+    // let data = {
+    //     records: records,
+    //     sObjectType: 'SolarBot_Status__c'
+    // };
+    records.sObjectType = 'SolarBot_Status__c';
+    console.log('records', records);
+    // const params = data;
     const options = {
         method: 'POST',
-        body: JSON.stringify(params),
+        body: JSON.stringify(records),
         mode: 'no-cors',
         headers: { Accept: 'application/json' }
     };
-    console.log('data', data, 'params', params, 'options', options);
+    // console.log('data', data, 'params', params, 'options', options);
     const resp = await fetch(
         `https://intelligent-cloud-app.herokuapp.com/update`,
         options
