@@ -47,7 +47,7 @@ export class updateDataFromSFWire {
     update(config) {
         if (this.connected) {
             console.log('Config:', config);
-            updateDataIntoSF(config && config.records.length > 0)
+            updateDataIntoSF(config)
                 .then((resp) => this.dataCallback({ data: resp }))
                 .catch((err) => this.dataCallback({ error: err }));
         }
