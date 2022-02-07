@@ -50,18 +50,20 @@ app.post('/update', async (req, res) => {
             req.params,
             req.body,
             req.headers,
-            req.query,
-            JSON.parse(req.body)
+            req.query
         );
         //const jsonBody = JSON.parse(req.body);
         const jsonBody = req.body;
+        console.log('1st console');
         const records = jsonBody.records;
+        console.log('2nd console');
         const sObjectType = jsonBody.sObjectType;
+        console.log('3rd console');
         const results = await updateIntoSF(records, sObjectType);
         console.log('Inserted successfully', results.length);
         res.json(results);
     } catch (error) {
-        console.log('Error while inserting record', error);
+        console.log('Error while parsing the data', error);
     }
 });
 
@@ -126,7 +128,7 @@ async function updateIntoSF(records, sObjectType) {
     console.log('updating into sf', records, sObjectType);
     await conn.sobject(sObjectType).update(records[0], (err, rets) => {
         if (err) {
-            return console.error('Errro while updating', err);
+            return console.error('Errror while updating', err);
         }
         for (let i = 0; i < rets.length; i++) {
             records[rets[i].id].result =
