@@ -52,8 +52,9 @@ app.post('/update', async (req, res) => {
             req.headers,
             req.query
         );
-        const records = req.body.records;
-        const sObjectType = req.body.sObjectType;
+        const jsonBody = JSON.parse(req.body);
+        const records = jsonBody.records;
+        const sObjectType = jsonBody.sObjectType;
         const results = await updateIntoSF(records, sObjectType);
         console.log('Inserted successfully', results.length);
         res.json(results);
@@ -121,7 +122,7 @@ async function insertIntoSF(records, sObjectType) {
 
 async function updateIntoSF(records, sObjectType) {
     console.log('updating into sf', records, sObjectType);
-    await conn.sobject(sObjectType).update(records, (err, rets) => {
+    await conn.sobject(sObjectType).update(records[0], (err, rets) => {
         if (err) {
             return console.error('Errro while updating', err);
         }
