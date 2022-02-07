@@ -50,9 +50,11 @@ app.post('/update', async (req, res) => {
             req.params,
             req.body,
             req.headers,
-            req.query
+            req.query,
+            JSON.parse(req.body)
         );
-        const jsonBody = JSON.parse(req.body);
+        //const jsonBody = JSON.parse(req.body);
+        const jsonBody = req.body;
         const records = jsonBody.records;
         const sObjectType = jsonBody.sObjectType;
         const results = await updateIntoSF(records, sObjectType);
