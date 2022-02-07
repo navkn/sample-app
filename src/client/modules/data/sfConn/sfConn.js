@@ -13,8 +13,6 @@ export const getDataFromSF = async () => {
 };
 
 export const updateDataIntoSF = async (records) => {
-    console.log('records', records);
-    console.log(typeof records);
     //if (records.length === 0) return;
     // let data = {
     //     records: records,

@@ -16,6 +16,7 @@ var conn;
 establishConnectionToSF();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(DIST_DIR)); //appends the dist folder to the root
 app.use(helmet());
 app.use(helmet({ crossOriginEmbedderPolicy: true }));
