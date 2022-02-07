@@ -26,8 +26,9 @@ export const updateDataIntoSF = async (records) => {
     const options = {
         method: 'POST',
         body: records,
-        mode: 'no-cors',
-        headers: { Accept: 'application/json', ContentType: 'application/json' }
+        headers: {
+            'Content-Type': 'application/json'
+        }
     };
     // console.log('data', data, 'params', params, 'options', options);
     const resp = await fetch(
