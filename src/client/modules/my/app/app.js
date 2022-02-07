@@ -71,6 +71,10 @@ export default class App extends LightningElement {
         this.editRecord = undefined;
     }
     handleSave() {
-        this.recordsToUpdate.push(this.editRecord);
+        console.log(this.recordsToUpdate);
+        let recordsToUpdate = [];
+        recordsToUpdate.push(this.editRecord);
+        this.recordsToUpdate = recordsToUpdate;
+        console.log(this.recordsToUpdate);
     }
 }
