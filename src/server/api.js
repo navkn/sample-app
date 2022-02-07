@@ -109,7 +109,7 @@ async function queryDataFromSF() {
 }
 
 async function insertIntoSF(records, sObjectType) {
-    console.log('Inserting into sf');
+    console.log('Inserting into sf', records, sObjectType);
     await conn.sobject(sObjectType).create(records, function (err, ret) {
         if (err || !ret.success) {
             return console.error(err, ret);

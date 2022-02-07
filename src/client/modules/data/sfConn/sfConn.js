@@ -27,6 +27,7 @@ export const updateDataIntoSF = async (records) => {
         mode: 'no-cors',
         headers: { Accept: 'application/json' }
     };
+    console.log('data', data, 'params', params, 'options', options);
     const resp = await fetch(
         `https://intelligent-cloud-app.herokuapp.com/update`,
         options
