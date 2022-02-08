@@ -98,11 +98,10 @@ export default class App extends LightningElement {
             ...this.template.querySelectorAll('.inputCmp')
         ].reduce((validSoFar, inputCmp) => {
             // inputCmp.reportValidity();
-            this.checkValidityAndSave(inputCmp, inputCmp.value, inputCmp.name);
+            this.checkValidity(inputCmp, inputCmp.value, inputCmp.name);
             return validSoFar && inputCmp.checkValidity();
         }, true);
         if (allValid) {
-            window.alert('All form entries look valid. Ready to submit!');
             console.log('Before pushing : ', this.recordsToUpdate);
             let recordsToUpdate = [];
             recordsToUpdate.push(this.recordToSave);
@@ -117,16 +116,15 @@ export default class App extends LightningElement {
     }
 
     handleCheckAndSave(event) {
-        console.log(JSON.stringify(event.target));
-        this.checkValidityAndSave(
-            event.target,
-            event.target.value,
-            event.target.name
-        );
-        console.log('editrecord: ', this.editRecord);
+        let elem = event.target;
+        if (this.checkValidity(elem, elem.value, elem.name)) {
+            elem.setCustomValidity('');
+            this.recordToSave[elem.name] = elem.value;
+        }
+        console.log('editrecord: ', this.recordToSave);
     }
 
-    checkValidityAndSave(elem, elemVal, elemName) {
+    checkValidity(elem, elemVal, elemName) {
         let isValid = true;
         if (elemName === 'Name' && elemVal === 'Naveen') {
             elem.setCustomValidity("Can't use author name");
@@ -144,10 +142,7 @@ export default class App extends LightningElement {
         }
         if (!isValid) {
             elem.reportValidity();
-            return isValid;
         }
-        elem.setCustomValidity('');
-        this.recordToSave[elemName] = elemVal;
         return isValid;
     }
 

@@ -43,6 +43,12 @@
                             class="slds-modal__content slds-p-around_medium"
                             id="modal-content-id-1"
                         >
+                            <template if:true={isUpdating}>
+                                <lightning-spinner
+                                    alternative-text="Processing"
+                                    size="large"
+                                ></lightning-spinner>
+                            </template>
                             <div class="slds-grid slds-wrap">
                                 <div
                                     class="slds-col slds-size_6-of-12 slds-p-horizontal_x-small"
@@ -138,12 +144,6 @@
                     class="slds-backdrop slds-backdrop_open"
                     role="presentation"
                 ></div>
-            </div>
-            <div if:true={isUpdating} class="slds-backdrop slds-backdrop_open">
-                <lightning-spinner
-                    alternative-text="Processing"
-                    size="large"
-                ></lightning-spinner>
             </div>
             <!-- <p slot="footer">Card Footer</p> -->
         </lightning-card>

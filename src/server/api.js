@@ -124,15 +124,16 @@ async function insertIntoSF(records, sObjectType) {
 
 async function updateIntoSF(records, sObjectType) {
     console.log('Started the updatation : ', records, sObjectType);
-    await conn.sobject(sObjectType).update(records, (err, rets) => {
-        if (err) {
-            return console.error('Errror while updating', err);
+    await conn.sobject(sObjectType).update(records[0], (err, ret) => {
+        if (err || !ret.success) {
+            return console.error(err, ret);
         }
-        // for (let i = 0; i < rets.length; i++) {
-        //     records[rets[i].id].result =
-        //         rets[i].success === true ? 'success' : 'failed';
+        console.log('Updated Successfully : ' + ret);
+        // for (let i = 0; i < ret.length; i++) {
+        //     records[ret[i].id].result =
+        //         ret[i].success === true ? 'success' : 'failed';
         // }
-        return rets;
+        return ret;
     });
 }
 
