@@ -35,8 +35,8 @@ export const updateDataIntoSF = async (records) => {
         `https://intelligent-cloud-app.herokuapp.com/update`,
         options
     );
-    console.log('before stingify', resp);
-    console.log('Data from server', JSON.stringify(resp));
+    console.log('before stingify', resp.body);
+    console.log('Data from server', JSON.stringify(resp.body));
     let result = await resp.json();
     // eslint-disable-next-line consistent-return
     return result;
