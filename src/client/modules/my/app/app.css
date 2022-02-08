@@ -1,1 +1,4 @@
 @import '@salesforce/slds/legacy';
+.modalBody {
+    position: relative;
+}

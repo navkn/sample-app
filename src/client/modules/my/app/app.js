@@ -155,6 +155,7 @@ export default class App extends LightningElement {
         // });
         // this.dispatchEvent(evt);
         console.log(variant, mode);
+        console.log('This is the notification: ', title + message);
         window.alert(title + '..' + message);
     }
 }

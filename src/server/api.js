@@ -46,19 +46,11 @@ app.get('/create', async (req, res) => {
 
 app.post('/update', async (req, res) => {
     try {
-        console.log('Update is hit');
-        console.log(
-            'req details',
-            req.params,
-            req.body,
-            req.headers,
-            req.query
-        );
+        console.log('Update request is received: ');
         const jsonBody = req.body;
         const records = jsonBody.records;
         const sObjectType = jsonBody.sObjectType;
         const results = await updateIntoSF(records, sObjectType);
-        console.log('Updated successfully', results);
         res.json(results);
     } catch (error) {
         console.log('Error while parsing the request', error);
@@ -125,10 +117,12 @@ async function insertIntoSF(records, sObjectType) {
 async function updateIntoSF(records, sObjectType) {
     console.log('Started the updatation : ', records, sObjectType);
     await conn.sobject(sObjectType).update(records[0], (err, ret) => {
-        if (err || !ret.success) {
-            return console.error(err, ret);
+        if (err) {
+            console.error('Errro while updating the record: ', err);
+            return err;
         }
-        console.log('Updated Successfully : ' + ret);
+        console.log('Updated successfully: ', JSON.stringify(ret));
+        // if (err) { return console.error(err); }
         // for (let i = 0; i < ret.length; i++) {
         //     records[ret[i].id].result =
         //         ret[i].success === true ? 'success' : 'failed';
