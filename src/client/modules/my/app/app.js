@@ -19,7 +19,7 @@ const columns = [
 export default class App extends LightningElement {
     result;
     columns = columns;
-    editRecord = {};
+    editRecord;
     recordsToUpdate = [];
     isUpdating = false;
     // eslint-disable-next-line @lwc/lwc/no-unknown-wire-adapters
@@ -54,6 +54,8 @@ export default class App extends LightningElement {
                 'success',
                 'dismissible'
             );
+            this.handleCancel();
+            this.isUpdating = false;
         }
         if (error) {
             this.showNotification(
@@ -62,6 +64,7 @@ export default class App extends LightningElement {
                 'error',
                 'sticky'
             );
+            this.isUpdating = false;
             //this.recordsToUpdate = []This will end up making recursive calls as we r continously changing the array assignment here
         }
     }
@@ -71,7 +74,7 @@ export default class App extends LightningElement {
         // eslint-disable-next-line default-case
         switch (action.name) {
             case 'edit':
-                this.editRecord.Id = row.Id;
+                this.editRecord = { Id: row.Id };
                 break;
             case 'delete':
                 // eslint-disable-next-line no-case-declarations
@@ -85,7 +88,7 @@ export default class App extends LightningElement {
     }
 
     handleCancel() {
-        this.editRecord = {};
+        this.editRecord = undefined;
     }
     handleSave() {
         const allValid = [
@@ -96,12 +99,12 @@ export default class App extends LightningElement {
         }, true);
         if (allValid) {
             window.alert('All form entries look valid. Ready to submit!');
-            console.log(this.recordsToUpdate);
+            console.log('Before pushing : ', this.recordsToUpdate);
             let recordsToUpdate = [];
             recordsToUpdate.push(this.editRecord);
             this.isUpdating = true;
             this.recordsToUpdate = recordsToUpdate;
-            console.log(this.recordsToUpdate);
+            console.log('After pushing : ', this.recordsToUpdate);
         } else {
             window.alert(
                 'Please update the invalid form entries and try again.'

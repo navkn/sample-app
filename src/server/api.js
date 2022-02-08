@@ -26,7 +26,7 @@ app.get('/read', async (req, res) => {
     try {
         let results = await queryDataFromSF();
         res.json(results);
-        console.log('Priniting the accounts: ', results);
+        console.log('#records size : ', results.totalSize);
     } catch (error) {
         console.log('Uncaught exception', error);
     }
@@ -54,18 +54,14 @@ app.post('/update', async (req, res) => {
             req.headers,
             req.query
         );
-        //const jsonBody = JSON.parse(req.body);
         const jsonBody = req.body;
-        console.log('1st console');
         const records = jsonBody.records;
-        console.log('2nd console');
         const sObjectType = jsonBody.sObjectType;
-        console.log('3rd console');
         const results = await updateIntoSF(records, sObjectType);
-        console.log('Inserted successfully', results.length);
+        console.log('Updated successfully', results.length);
         res.json(results);
     } catch (error) {
-        console.log('Error while parsing the data', error);
+        console.log('Error while parsing the request', error);
     }
 });
 
@@ -127,8 +123,8 @@ async function insertIntoSF(records, sObjectType) {
 }
 
 async function updateIntoSF(records, sObjectType) {
-    console.log('updating into sf', records, sObjectType);
-    await conn.sobject(sObjectType).update(records[0], (err, rets) => {
+    console.log('Started the updatation : ', records, sObjectType);
+    await conn.sobject(sObjectType).update(records, (err, rets) => {
         if (err) {
             return console.error('Errror while updating', err);
         }

@@ -53,7 +53,7 @@
                                         label="SolarBot Status Name"
                                         name="Name"
                                         value={editRecord.Name}
-                                        onchange={checkValidityAndSave}
+                                        onchange={handleCheckAndSave}
                                     ></lightning-input>
                                 </div>
                                 <div
@@ -76,7 +76,7 @@
                                         label="Panel Temp"
                                         name="Panel_Temperature__c"
                                         value={editRecord.Panel_Temperature__c}
-                                        onchange={checkValidityAndSave}
+                                        onchange={handleCheckAndSave}
                                     ></lightning-input>
                                 </div>
                                 <div
@@ -88,7 +88,7 @@
                                         label="Kilowatt Hours"
                                         name="Kilowatt_Hours__c"
                                         value={editRecord.Kilowatt_Hours__c}
-                                        onchange={checkValidityAndSave}
+                                        onchange={handleCheckAndSave}
                                     ></lightning-input>
                                 </div>
                                 <div
@@ -112,7 +112,7 @@
                                         label="Maintenance Requested"
                                         name="Maintenance_Requested__c"
                                         value={editRecord.Maintenance_Requested__c}
-                                        onchange={checkValidityAndSave}
+                                        onchange={handleCheckAndSave}
                                     ></lightning-input>
                                 </div>
                             </div>
