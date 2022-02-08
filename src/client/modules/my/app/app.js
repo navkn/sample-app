@@ -104,7 +104,7 @@ export default class App extends LightningElement {
             window.alert('All form entries look valid. Ready to submit!');
             console.log('Before pushing : ', this.recordsToUpdate);
             let recordsToUpdate = [];
-            recordsToUpdate.push(this.editRecord);
+            recordsToUpdate.push(this.recordToSave);
             this.isUpdating = true;
             this.recordsToUpdate = recordsToUpdate;
             console.log('After pushing : ', this.recordsToUpdate);
