@@ -128,11 +128,11 @@ async function updateIntoSF(records, sObjectType) {
         if (err) {
             return console.error('Errror while updating', err);
         }
-        for (let i = 0; i < rets.length; i++) {
-            records[rets[i].id].result =
-                rets[i].success === true ? 'success' : 'failed';
-        }
-        return records;
+        // for (let i = 0; i < rets.length; i++) {
+        //     records[rets[i].id].result =
+        //         rets[i].success === true ? 'success' : 'failed';
+        // }
+        return rets;
     });
 }
 

@@ -97,7 +97,8 @@ export default class App extends LightningElement {
         const allValid = [
             ...this.template.querySelectorAll('.inputCmp')
         ].reduce((validSoFar, inputCmp) => {
-            inputCmp.reportValidity();
+            // inputCmp.reportValidity();
+            this.checkValidityAndSave(inputCmp, inputCmp.value, inputCmp.name);
             return validSoFar && inputCmp.checkValidity();
         }, true);
         if (allValid) {
@@ -148,9 +149,10 @@ export default class App extends LightningElement {
             isValid = false;
         }
         if (!isValid) {
-            elem.inputCmp.reportValidity();
+            elem.reportValidity();
             return isValid;
         }
+        elem.setCustomValidity('');
         this.recordToSave[elemName] = elemVal;
         return isValid;
     }
