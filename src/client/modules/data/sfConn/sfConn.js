@@ -22,7 +22,7 @@ export const updateDataIntoSF = async (records) => {
     console.log('records', records);
     // const params = data;
     const options = {
-        method: 'POST',
+        method: 'GET',
         body: records,
         headers: {
             Accept: 'application/json',
