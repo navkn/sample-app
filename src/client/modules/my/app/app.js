@@ -20,6 +20,7 @@ export default class App extends LightningElement {
     result;
     columns = columns;
     editRecord;
+    recordToSave;
     recordsToUpdate = [];
     isUpdating = false;
     // eslint-disable-next-line @lwc/lwc/no-unknown-wire-adapters
@@ -74,7 +75,8 @@ export default class App extends LightningElement {
         // eslint-disable-next-line default-case
         switch (action.name) {
             case 'edit':
-                this.editRecord = { Id: row.Id };
+                this.recordToSave = { Id: row.Id };
+                this.editRecord = row;
                 break;
             case 'delete':
                 // eslint-disable-next-line no-case-declarations
@@ -89,6 +91,7 @@ export default class App extends LightningElement {
 
     handleCancel() {
         this.editRecord = undefined;
+        this.recordToSave = undefined;
     }
     handleSave() {
         const allValid = [
@@ -148,7 +151,7 @@ export default class App extends LightningElement {
             elem.inputCmp.reportValidity();
             return isValid;
         }
-        this.editRecord[elemName] = elemVal;
+        this.recordToSave[elemName] = elemVal;
         return isValid;
     }
 
