@@ -1,6 +1,8 @@
+/* eslint-disable no-alert */
 import { LightningElement, wire } from 'lwc';
 // eslint-disable-next-line @lwc/lwc/no-unknown-wire-adapters
 import { getDataFromSFWire, updateDataFromSFWire } from 'data/sfWire';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 const actions = [
     { label: 'Edit', name: 'edit' },
     { label: 'Delete', name: 'delete' }
@@ -17,8 +19,9 @@ const columns = [
 export default class App extends LightningElement {
     result;
     columns = columns;
-    editRecord;
+    editRecord = {};
     recordsToUpdate = [];
+    isUpdating = false;
     // eslint-disable-next-line @lwc/lwc/no-unknown-wire-adapters
     @wire(getDataFromSFWire) getRecords({ data, error }) {
         console.log('Fetching the records');
@@ -32,7 +35,12 @@ export default class App extends LightningElement {
             this.result = records;
         }
         if (error) {
-            console.log('got error', error);
+            this.showNotification(
+                'Unable to retrieve records',
+                JSON.stringify(error),
+                'error',
+                'sticky'
+            );
         }
     }
     //error here
@@ -40,12 +48,21 @@ export default class App extends LightningElement {
     updateRecords({ data, error }) {
         console.log('updaterecords has been called');
         if (data) {
-            console.log('Updated Data', data);
-            this.recordsToUpdate = data;
+            this.showNotification(
+                'Record(s) has been updated successfully',
+                '',
+                'success',
+                'dismissible'
+            );
         }
         if (error) {
-            console.log('Error while updating data', error);
-            //this.recordsToUpdate = [];This will end up making recursive calls as we r continously changing the array assignment here
+            this.showNotification(
+                'Updation failed',
+                JSON.stringify(error),
+                'error',
+                'sticky'
+            );
+            //this.recordsToUpdate = []This will end up making recursive calls as we r continously changing the array assignment here
         }
     }
     handleRowAction(event) {
@@ -54,7 +71,7 @@ export default class App extends LightningElement {
         // eslint-disable-next-line default-case
         switch (action.name) {
             case 'edit':
-                this.editRecord = row;
+                this.editRecord.Id = row.Id;
                 break;
             case 'delete':
                 // eslint-disable-next-line no-case-declarations
@@ -68,13 +85,77 @@ export default class App extends LightningElement {
     }
 
     handleCancel() {
-        this.editRecord = undefined;
+        this.editRecord = {};
     }
     handleSave() {
-        console.log(this.recordsToUpdate);
-        let recordsToUpdate = [];
-        recordsToUpdate.push(this.editRecord);
-        this.recordsToUpdate = recordsToUpdate;
-        console.log(this.recordsToUpdate);
+        const allValid = [
+            ...this.template.querySelectorAll('.inputCmp')
+        ].reduce((validSoFar, inputCmp) => {
+            inputCmp.reportValidity();
+            return validSoFar && inputCmp.checkValidity();
+        }, true);
+        if (allValid) {
+            window.alert('All form entries look valid. Ready to submit!');
+            console.log(this.recordsToUpdate);
+            let recordsToUpdate = [];
+            recordsToUpdate.push(this.editRecord);
+            this.isUpdating = true;
+            this.recordsToUpdate = recordsToUpdate;
+            console.log(this.recordsToUpdate);
+        } else {
+            window.alert(
+                'Please update the invalid form entries and try again.'
+            );
+        }
+    }
+
+    handleCheckAndSave(event) {
+        console.log(JSON.stringify(event.target));
+        this.checkValidityAndSave(
+            event.target,
+            event.target.value,
+            event.target.name
+        );
+        console.log('editrecord: ', this.editRecord);
+    }
+
+    checkValidityAndSave(elem, elemVal, elemName) {
+        let isValid = true;
+        if (elemName === 'Name' && elemVal === 'Naveen') {
+            elem.setCustomValidity("Can't use author name");
+            isValid = false;
+        } else if (elemName === 'Panel_Temperature__c' && elemVal < 0) {
+            elem.setCustomValidity("Can't use negative temperature");
+            isValid = false;
+        } else if (
+            elemName === 'Kilowatt_Hours__c' &&
+            elemVal > 100 &&
+            elemVal < 0
+        ) {
+            elem.setCustomValidity('Should be in the range between 0 - 100');
+            isValid = false;
+        } else if (
+            elemName === 'Maintenance_Requested__c' &&
+            elemVal !== false
+        ) {
+            elem.setCustomValidity("Can't be unchecked once it's checked");
+            isValid = false;
+        }
+        if (!isValid) {
+            elem.inputCmp.reportValidity();
+            return isValid;
+        }
+        this.editRecord[elemName] = elemVal;
+        return isValid;
+    }
+
+    showNotification(title, message, variant, mode) {
+        const evt = new ShowToastEvent({
+            title: title,
+            message: message,
+            variant: variant,
+            mode: mode
+        });
+        this.dispatchEvent(evt);
     }
 }

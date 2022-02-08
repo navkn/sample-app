@@ -49,8 +49,11 @@
                                 >
                                     <lightning-input
                                         type="text"
+                                        class="inputCmp"
                                         label="SolarBot Status Name"
+                                        name="Name"
                                         value={editRecord.Name}
+                                        onchange={checkValidityAndSave}
                                     ></lightning-input>
                                 </div>
                                 <div
@@ -59,7 +62,9 @@
                                     <lightning-input
                                         type="text"
                                         label="SolarBot"
+                                        name="SolarBot__r.Name"
                                         value={editRecord.SolarBot__r.Name}
+                                        read-only
                                     ></lightning-input>
                                 </div>
                                 <div
@@ -67,8 +72,11 @@
                                 >
                                     <lightning-input
                                         type="text"
+                                        class="inputCmp"
                                         label="Panel Temp"
+                                        name="Panel_Temperature__c"
                                         value={editRecord.Panel_Temperature__c}
+                                        onchange={checkValidityAndSave}
                                     ></lightning-input>
                                 </div>
                                 <div
@@ -76,8 +84,11 @@
                                 >
                                     <lightning-input
                                         type="text"
+                                        class="inputCmp"
                                         label="Kilowatt Hours"
+                                        name="Kilowatt_Hours__c"
                                         value={editRecord.Kilowatt_Hours__c}
+                                        onchange={checkValidityAndSave}
                                     ></lightning-input>
                                 </div>
                                 <div
@@ -85,17 +96,23 @@
                                 >
                                     <lightning-input
                                         type="text"
+                                        class="inputCmp"
                                         label="SolarBot Account Name"
+                                        name="SolarBot__r.Account__r.Name"
                                         value={editRecord.SolarBot__r.Account__r.Name}
+                                        read-only
                                     ></lightning-input>
                                 </div>
                                 <div
                                     class="slds-col slds-size_6-of-12 slds-p-horizontal_x-small"
                                 >
                                     <lightning-input
-                                        type="text"
+                                        type="checkbox"
+                                        class="inputCmp"
                                         label="Maintenance Requested"
+                                        name="Maintenance_Requested__c"
                                         value={editRecord.Maintenance_Requested__c}
+                                        onchange={checkValidityAndSave}
                                     ></lightning-input>
                                 </div>
                             </div>
@@ -121,6 +138,12 @@
                     class="slds-backdrop slds-backdrop_open"
                     role="presentation"
                 ></div>
+            </div>
+            <div if:true={isUpdating} class="slds-backdrop slds-backdrop_open">
+                <lightning-spinner
+                    alternative-text="Processing"
+                    size="large"
+                ></lightning-spinner>
             </div>
             <!-- <p slot="footer">Card Footer</p> -->
         </lightning-card>

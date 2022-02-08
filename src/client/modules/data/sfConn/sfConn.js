@@ -21,11 +21,14 @@ export const updateDataIntoSF = async (records) => {
     records.sObjectType = 'SolarBot_Status__c';
     console.log('records', records);
     console.log('string format of data', JSON.stringify(records));
-    // const params = data;
+    // always use the  single quotes inside the header declaration
     const options = {
         method: 'POST',
         body: JSON.stringify(records),
-        headers: { 'Content-Type': 'application/json; charset=UTF-8' }
+        headers: {
+            Accept: 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json; charset=UTF-8'
+        }
     };
     console.log('options', options);
     const resp = await fetch(
