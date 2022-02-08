@@ -52,6 +52,7 @@ app.post('/update', async (req, res) => {
         const sObjectType = jsonBody.sObjectType;
         const results = await updateIntoSF(records, sObjectType);
         res.json(results);
+        console.log('Checking for the timeout', JSON.stringify(results));
     } catch (error) {
         console.log('Error while parsing the request', error);
     }
