@@ -46,8 +46,9 @@ app.get('/create', async (req, res) => {
 
 app.post('/update', async (req, res) => {
     try {
+        console.log('Update is hit');
         console.log(
-            'Got request from SF',
+            'req details',
             req.params,
             req.body,
             req.headers,
