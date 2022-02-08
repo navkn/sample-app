@@ -2,7 +2,7 @@
 import { LightningElement, wire } from 'lwc';
 // eslint-disable-next-line @lwc/lwc/no-unknown-wire-adapters
 import { getDataFromSFWire, updateDataFromSFWire } from 'data/sfWire';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+//import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 const actions = [
     { label: 'Edit', name: 'edit' },
     { label: 'Delete', name: 'delete' }
@@ -150,12 +150,14 @@ export default class App extends LightningElement {
     }
 
     showNotification(title, message, variant, mode) {
-        const evt = new ShowToastEvent({
-            title: title,
-            message: message,
-            variant: variant,
-            mode: mode
-        });
-        this.dispatchEvent(evt);
+        // const evt = new ShowToastEvent({
+        //     title: title,
+        //     message: message,
+        //     variant: variant,
+        //     mode: mode
+        // });
+        // this.dispatchEvent(evt);
+        console.log(variant, mode);
+        window.alert(title + '..' + message);
     }
 }
