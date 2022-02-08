@@ -41,11 +41,11 @@ export default class App extends LightningElement {
         console.log('updaterecords has been called');
         if (data) {
             console.log('Updated Data', data);
-            this.recordsToUpdate = [];
+            this.recordsToUpdate = data;
         }
         if (error) {
             console.log('Error while updating data', error);
-            this.recordsToUpdate = [];
+            //this.recordsToUpdate = [];This will end up making recursive calls as we r continously changing the array assignment here
         }
     }
     handleRowAction(event) {
