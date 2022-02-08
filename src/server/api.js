@@ -26,7 +26,7 @@ app.get('/read', async (req, res) => {
     try {
         let results = await queryDataFromSF();
         res.json(results);
-        console.log('Priniting the accounts: ', results.length);
+        console.log('Priniting the accounts: ', results);
     } catch (error) {
         console.log('Uncaught exception', error);
     }
