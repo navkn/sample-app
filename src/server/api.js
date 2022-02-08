@@ -43,8 +43,9 @@ app.get('/create', async (req, res) => {
         console.log('Error while inserting record', error);
     }
 });
-
+//response will be timedout by default after 30sec
 app.post('/update', async (req, res) => {
+    res.setTimeout(50000); //50secs
     try {
         console.log('Update request is received: ');
         const jsonBody = req.body;
@@ -117,7 +118,7 @@ async function insertIntoSF(records, sObjectType) {
 
 async function updateIntoSF(records, sObjectType) {
     console.log('Started the updatation : ', records, sObjectType);
-    await conn.sobject(sObjectType).update(records, (err, ret) => {
+    let result = await conn.sobject(sObjectType).update(records, (err, ret) => {
         if (err) {
             console.error('Errro while updating the record: ', err);
             return err;
@@ -130,6 +131,8 @@ async function updateIntoSF(records, sObjectType) {
         // }
         return ret;
     });
+    console.log('132', JSON.stringify(result));
+    return result;
 }
 
 app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));
