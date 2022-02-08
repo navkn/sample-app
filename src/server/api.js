@@ -58,7 +58,7 @@ app.post('/update', async (req, res) => {
         const records = jsonBody.records;
         const sObjectType = jsonBody.sObjectType;
         const results = await updateIntoSF(records, sObjectType);
-        console.log('Updated successfully', results.length);
+        console.log('Updated successfully', results);
         res.json(results);
     } catch (error) {
         console.log('Error while parsing the request', error);
