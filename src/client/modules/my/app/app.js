@@ -141,12 +141,6 @@ export default class App extends LightningElement {
         ) {
             elem.setCustomValidity('Should be in the range between 0 - 100');
             isValid = false;
-        } else if (
-            elemName === 'Maintenance_Requested__c' &&
-            elemVal !== false
-        ) {
-            elem.setCustomValidity("Can't be unchecked once it's checked");
-            isValid = false;
         }
         if (!isValid) {
             elem.reportValidity();
