@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const express = require('express');
 const { getToken } = require('sf-jwt-token');
 const jsforce = require('jsforce');
-
+const timeout = require('connect-timeout');
 const DIST_DIR = './dist';
 const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3001;
@@ -44,8 +44,8 @@ app.get('/create', async (req, res) => {
     }
 });
 //response will be timedout by default after 30sec
-app.post('/update', async (req, res) => {
-    req.setTimeout(50000); //50secs
+app.post('/update', timeout('55s'), async (req, res) => {
+    // req.setTimeout(50000); //50secs
     try {
         console.log('Update request is received: ');
         const jsonBody = req.body;
