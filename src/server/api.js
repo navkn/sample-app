@@ -45,7 +45,7 @@ app.get('/create', async (req, res) => {
 });
 //response will be timedout by default after 30sec
 app.post('/update', async (req, res) => {
-    res.setTimeout(50000); //50secs
+    req.setTimeout(50000); //50secs
     try {
         console.log('Update request is received: ');
         const jsonBody = req.body;
