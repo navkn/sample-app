@@ -14,7 +14,6 @@ const app = express();
 var jwtToken;
 var conn;
 establishConnectionToSF();
-// app.use(timeout('60000')); //uses 60secs as timeout
 app.use(express.json()); //available in new release of express else need to use body-parser
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(DIST_DIR)); //appends the dist folder to the root
@@ -22,6 +21,7 @@ app.use(helmet());
 app.use(helmet({ crossOriginEmbedderPolicy: true }));
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 app.use(compression());
+// app.use(timeout('60000')); //uses 60secs as timeout
 app.get('/read', async (req, res) => {
     try {
         let results = await queryDataFromSF();
@@ -45,10 +45,12 @@ app.get('/create', async (req, res) => {
 });
 //response will be timedout by default after 30sec
 app.post('/update', async (req, res) => {
-    req.setTimeout(15000, () => {
-        console.log('request timed out at 15secs');
+    console.log('after setting the timeout', req.headers);
+    req.setTimeout(35000, () => {
+        console.log('request timed out at 35secs');
     }); //50secs
     //  res.setTimeout(50000);//50secs
+    console.log('before setting the timeout', req.headers);
     try {
         console.log('Update request is received: ');
         const jsonBody = req.body;
