@@ -14,7 +14,7 @@ const app = express();
 var jwtToken;
 var conn;
 establishConnectionToSF();
-
+app.use(timeout('60000')); //uses 60secs as timeout
 app.use(express.json()); //available in new release of express else need to use body-parser
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(DIST_DIR)); //appends the dist folder to the root
@@ -44,7 +44,7 @@ app.get('/create', async (req, res) => {
     }
 });
 //response will be timedout by default after 30sec
-app.post('/update', timeout('55s'), async (req, res) => {
+app.post('/update', async (req, res) => {
     // req.setTimeout(50000); //50secs
     try {
         console.log('Update request is received: ');
