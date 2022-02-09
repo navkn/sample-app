@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const express = require('express');
 const { getToken } = require('sf-jwt-token');
 const jsforce = require('jsforce');
-const timeout = require('connect-timeout');
+// const timeout = require('connect-timeout');
 const DIST_DIR = './dist';
 const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3001;
@@ -14,7 +14,7 @@ const app = express();
 var jwtToken;
 var conn;
 establishConnectionToSF();
-app.use(timeout('60000')); //uses 60secs as timeout
+//app.use(timeout('60000')); //uses 60secs as timeout
 app.use(express.json()); //available in new release of express else need to use body-parser
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(DIST_DIR)); //appends the dist folder to the root
@@ -45,8 +45,8 @@ app.get('/create', async (req, res) => {
 });
 //response will be timedout by default after 30sec
 app.post('/update', async (req, res) => {
-    req.setTimeout(50000); //50secs
-    res.setTimeout(50000); //50secs
+    //req.setTimeout(50000); //50secs
+    // res.setTimeout(50000); //50secs
     try {
         console.log('Update request is received: ');
         const jsonBody = req.body;
@@ -136,4 +136,7 @@ async function updateIntoSF(records, sObjectType) {
     return result;
 }
 
-app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));
+const server = app.listen(PORT, () =>
+    console.log(`✅  API Server started:${HOST}:${PORT} `)
+);
+server.setTimeout(500000);
