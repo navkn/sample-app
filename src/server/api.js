@@ -46,11 +46,11 @@ app.get('/create', async (req, res) => {
 //response will be timedout by default after 30sec
 app.post('/update', async (req, res) => {
     console.log('before setting the timeout');
-    req.setTimeout(10000, () => {
-        req.clearTimeout();
-        res.send('Still processing');
-        console.log('request timed out at 10secs');
-    }); //50secs
+    // req.setTimeout(10000, () => {
+    //     req.clearTimeout();
+    //     res.send('Still processing');
+    //     console.log('request timed out at 10secs');
+    // }); //50secs
     // res.setTimeout(15000, () => {
     //     console.log('Response is timedout at 15sec');
     // });
@@ -145,4 +145,9 @@ async function updateIntoSF(records, sObjectType) {
     return result;
 }
 
-app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));
+const server = app.listen(PORT, () =>
+    console.log(`✅  API Server started:${HOST}:${PORT} `)
+);
+server.setTimeout(60000, () => {
+    console.log('Server timeout and so socket will be closed ');
+});
