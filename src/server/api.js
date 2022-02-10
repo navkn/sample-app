@@ -47,11 +47,13 @@ app.get('/create', async (req, res) => {
 app.post('/update', async (req, res) => {
     console.log('before setting the timeout');
     req.setTimeout(10000, () => {
-        console.log('request timed out at 35secs');
+        req.clearTimeout();
+        res.send('Still processing');
+        console.log('request timed out at 10secs');
     }); //50secs
-    res.setTimeout(15000, () => {
-        console.log('Response is timedout at 15sec');
-    });
+    // res.setTimeout(15000, () => {
+    //     console.log('Response is timedout at 15sec');
+    // });
     //  res.setTimeout(50000);//50secs
     console.log('after setting the timeout');
     try {
