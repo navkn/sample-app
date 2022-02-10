@@ -46,7 +46,7 @@ app.get('/create', async (req, res) => {
 //response will be timedout by default after 30sec
 app.post('/update', async (req, res) => {
     console.log('before setting the timeout');
-    req.setTimeout(40000, () => {
+    req.setTimeout(10000, () => {
         console.log('request timed out at 35secs');
     }); //50secs
     //  res.setTimeout(50000);//50secs
