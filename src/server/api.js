@@ -58,6 +58,7 @@ app.post('/update', async (req, res) => {
     const space = ' ';
     setTimeout(() => {
         res.writeHead(202);
+        console.log('sending the headers');
         res.write(space);
     }, 25000); //sending a whitespace to keep the connection alive at client
     console.log('after setting the timeout');
@@ -67,6 +68,9 @@ app.post('/update', async (req, res) => {
         const records = jsonBody.records;
         const sObjectType = jsonBody.sObjectType;
         const results = await updateIntoSF(records, sObjectType);
+        console.log('before flushing the headers', res.getHeaders);
+        res.flushHeaders();
+        console.log('after flushing the headers', res.getHeaders);
         res.json(results);
         console.log('Checking for the timeout', JSON.stringify(results));
     } catch (error) {
