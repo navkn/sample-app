@@ -57,7 +57,7 @@ app.post('/update', async (req, res) => {
     //  res.setTimeout(50000);//50secs
     const space = ' ';
     setTimeout(() => {
-        console.log('after sending the response the headers ', res.getHeaders);
+        //console.log('after sending the response the headers ', res.getHeaders);
         res.writeHead(202);
         console.log('sending the headers');
         res.write(space);
@@ -69,10 +69,10 @@ app.post('/update', async (req, res) => {
         const records = jsonBody.records;
         const sObjectType = jsonBody.sObjectType;
         const results = await updateIntoSF(records, sObjectType);
-        console.log('after sending the response the headers ', res.getHeaders);
+        //console.log('after sending the response the headers ', res.getHeaders);
         //res.flushHeaders();
         //console.log('after flushing the headers', res.getHeaders);
-        res.json(results);
+        res.status(200).json(results);
         console.log('Checking for the timeout', JSON.stringify(results));
     } catch (error) {
         console.log('Error while parsing the request', error);
