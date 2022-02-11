@@ -55,6 +55,11 @@ app.post('/update', async (req, res) => {
     //     console.log('Response is timedout at 15sec');
     // });
     //  res.setTimeout(50000);//50secs
+    const space = ' ';
+    setTimeout(() => {
+        res.writeHead(202);
+        res.write(space);
+    }, 25000); //sending a whitespace to keep the connection alive at client
     console.log('after setting the timeout');
     try {
         console.log('Update request is received: ');
@@ -145,9 +150,7 @@ async function updateIntoSF(records, sObjectType) {
     return result;
 }
 
-const server = app.listen(PORT, () =>
-    console.log(`✅  API Server started:${HOST}:${PORT} `)
-);
-server.setTimeout(60000, () => {
-    console.log('Server timeout and so socket will be closed ');
-});
+app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));
+// server.setTimeout(60000, () => {
+//     console.log('Server timeout and so socket will be closed ');
+// });//doesn't handle the h12 error
