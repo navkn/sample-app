@@ -64,10 +64,11 @@ app.post('/update', async (req, res) => {
         if (!res.headersSent) {
             console.log('writing the header just now');
             res.status(202); //res.writeHead(202);//try with status set setheader instead of using setHeader
-            console.log('wrote the head just now');
+            console.log(
+                'wrote the head just now and sending the headers and space'
+            );
+            res.write(space);
         }
-        console.log('sending the headers and space');
-        res.write(space);
     }, 25000); //sending a whitespace to keep the connection alive at client
     console.log('after setting the timeout');
     try {
@@ -77,7 +78,7 @@ app.post('/update', async (req, res) => {
         const sObjectType = jsonBody.sObjectType;
         const results = await updateIntoSF(records, sObjectType);
         console.log('Checking about the header sent', res.headersSent);
-        res.send(JSON.stringify(results)).end(); //couldn't able to write data to the same response saying the headers have been already set
+        res.write(JSON.stringify(results)).end(); //couldn't able to write data to the same response saying the headers have been already set
         console.log('Checking for the timeout', JSON.stringify(results));
     } catch (error) {
         console.log('Error while parsing the request', error);
