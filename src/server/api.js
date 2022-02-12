@@ -78,7 +78,7 @@ app.post('/update', async (req, res) => {
         const sObjectType = jsonBody.sObjectType;
         const results = await updateIntoSF(records, sObjectType);
         console.log('Checking about the header sent', res.headersSent);
-        res.write(JSON.stringify(results)); //couldn't able to write data to the same response saying the headers have been already set
+        res.write(JSON.stringify(results)); //res.send() -- >couldn't able to write data to the same response saying the headers have been already set
         res.end();
         console.log('Checking for the timeout', JSON.stringify(results));
     } catch (error) {
