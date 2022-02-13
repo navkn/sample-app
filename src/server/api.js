@@ -45,44 +45,45 @@ app.get('/create', async (req, res) => {
 });
 //response will be timedout by default after 30sec
 app.post('/update', async (req, res) => {
-    console.log('before setting the timeout');
+    console.log('Update request is received:');
     // req.setTimeout(10000, () => {
     //     req.clearTimeout();
     //     res.send('Still processing');
     //     console.log('request timed out at 10secs');
     // }); //50secs
-    // res.setTimeout(15000, () => {
-    //     console.log('Response is timedout at 15sec');
-    // });
-    //  res.setTimeout(50000);//50secs
+    res.setTimeout(60000, () => {
+        console.log('Response is timedout at 60sec');
+        if (!res.headersSent || !res.writableFinished) {
+            res.write("Processing more time So it's cancelled");
+            res.end(); //res.writeHead(202);//try with status set setheader instead of using setHeader
+        }
+    });
     const space = ' ';
     setTimeout(() => {
-        console.log(
-            'checking about the header sent or not in timeout func',
-            res.headersSent
-        );
-        if (!res.headersSent) {
+        if (!res.headersSent || !res.writableFinished) {
             console.log('writing the header just now');
             res.status(202); //res.writeHead(202);//try with status set setheader instead of using setHeader
-            console.log(
-                'wrote the head just now and sending the headers and space'
-            );
             res.write(space);
+            console.log(
+                'wrote the header just now and sent the headers and space'
+            );
         }
     }, 25000); //sending a whitespace to keep the connection alive at client
-    console.log('after setting the timeout');
     try {
-        console.log('Update request is received: ');
-        const jsonBody = req.body;
-        const records = jsonBody.records;
-        const sObjectType = jsonBody.sObjectType;
-        const results = await updateIntoSF(records, sObjectType);
-        console.log('Checking about the header sent', res.headersSent);
+        const results = await updateIntoSF(
+            req.body.records,
+            req.body.sObjectType
+        );
         res.write(JSON.stringify(results)); //res.send() -- >couldn't able to write data to the same response saying the headers have been already set
         res.end();
-        console.log('Checking for the timeout', JSON.stringify(results));
+        console.log('The result : ', JSON.stringify(results));
     } catch (error) {
-        console.log('Error while parsing the request', error);
+        if (!res.headersSent || !res.writableFinished) {
+            console.log('Error while processing the request');
+            res.status(400).send(JSON.stringify(error)); //res.writeHead(202);//try with status set setheader instead of using setHeader
+        } else {
+            console.error(JSON.stringify(error));
+        }
     }
 });
 
@@ -144,21 +145,24 @@ async function insertIntoSF(records, sObjectType) {
 }
 
 async function updateIntoSF(records, sObjectType) {
-    console.log('Started the updatation : ', records, sObjectType);
+    console.log(
+        'Started the updatation : ',
+        typeof records,
+        records,
+        sObjectType
+    );
     let result = await conn.sobject(sObjectType).update(records, (err, ret) => {
-        if (err) {
-            console.error('Errro while updating the record: ', err);
-            return err;
-        }
-        console.log('Updated successfully: ', JSON.stringify(ret));
-        // if (err) { return console.error(err); }
-        // for (let i = 0; i < ret.length; i++) {
-        //     records[ret[i].id].result =
-        //         ret[i].success === true ? 'success' : 'failed';
+        // if (err) {
+        //     console.error('Errro while updating the record: ', err);
+        //     return err;
         // }
+        // console.log('Updated successfully: ', JSON.stringify(ret));
+        if (err) {
+            console.error(err);
+            throw new Error(err);
+        }
         return ret;
     });
-    console.log('132', JSON.stringify(result));
     return result;
 }
 

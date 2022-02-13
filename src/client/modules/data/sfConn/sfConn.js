@@ -13,14 +13,8 @@ export const getDataFromSF = async () => {
 };
 
 export const updateDataIntoSF = async (records) => {
-    //if (records.length === 0) return;
-    // let data = {
-    //     records: records,
-    //     sObjectType: 'SolarBot_Status__c'
-    // };
     records.sObjectType = 'SolarBot_Status__c';
     console.log('records', records);
-    console.log('string format of data', JSON.stringify(records));
     // always use the  single quotes inside the header declaration
     const options = {
         method: 'POST',
@@ -31,11 +25,15 @@ export const updateDataIntoSF = async (records) => {
         }
     };
     console.log('options', options);
-    const resp = await fetch(
-        `https://intelligent-cloud-app.herokuapp.com/update`,
-        options
-    );
-    console.log('before stingify', resp.body);
+    let resp;
+    try {
+        resp = await fetch(
+            `https://intelligent-cloud-app.herokuapp.com/update`,
+            options
+        );
+    } catch (error) {
+        console.error(JSON.stringify(error));
+    }
     console.log('Data from server', JSON.stringify(resp.body));
     let result = await resp.json();
     // eslint-disable-next-line consistent-return
