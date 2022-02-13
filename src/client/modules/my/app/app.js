@@ -103,7 +103,7 @@ export default class App extends LightningElement {
         }, true);
         if (allValid) {
             console.log('Before pushing : ', this.recordsToUpdate);
-            let recordsToUpdate = [];
+            let recordsToUpdate = []; //initialize an array
             recordsToUpdate.push(this.recordToSave);
             this.isUpdating = true;
             this.recordsToUpdate = recordsToUpdate;

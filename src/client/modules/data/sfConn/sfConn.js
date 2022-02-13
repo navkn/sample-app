@@ -34,8 +34,10 @@ export const updateDataIntoSF = async (records) => {
     } catch (error) {
         console.error(JSON.stringify(error));
     }
-    console.log('Data from server', JSON.stringify(resp.body));
+    console.log('printing without strinigifting the resp.body', resp.body);
+    console.log('printing the resp body', JSON.stringify(resp.body));
     let result = await resp.json();
+    console.log('printing after resp.json');
     // eslint-disable-next-line consistent-return
     return result;
 };
