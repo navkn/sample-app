@@ -59,9 +59,10 @@ export default class App extends LightningElement {
             this.isUpdating = false;
         }
         if (error) {
+            console.log('displaying the error at app.js', error);
             this.showNotification(
-                'Updation failed',
-                JSON.stringify(error),
+                'Updation failed: ',
+                error,
                 'error',
                 'sticky'
             );

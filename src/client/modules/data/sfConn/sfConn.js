@@ -16,6 +16,10 @@ export const getDataFromSF = async () => {
 export const updateDataIntoSF = async (records) => {
     records.sObjectType = 'SolarBot_Status__c';
     console.log('records', records);
+    if (Array.isArray(records) && records.length > 0) {
+        console.log('Array is null');
+        return {};
+    }
     // always use the  single quotes inside the header declaration
     const options = {
         method: 'POST',
@@ -39,8 +43,15 @@ export const updateDataIntoSF = async (records) => {
     let result = await resp.json(); //Doesn't have anything on res.body
     console.log('printing after resp.json', result);
     if (Array.isArray(result) && result.length > 0) {
+        console.log('error objet is an array');
         result.forEach((rec) => {
+            console.log('Prinitng the nth rec', rec);
             if (rec.success === false) {
+                console.log(
+                    'success is false',
+                    rec.errors[0].message,
+                    rec.errors[0]
+                );
                 throw new Error(rec.errors[0].message);
             }
         });
