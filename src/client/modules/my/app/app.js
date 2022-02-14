@@ -18,12 +18,6 @@ const columns = [
         type: 'number'
     },
     {
-        label: 'Kilowatt Hours',
-        fieldName: 'Kilowatt_Hours__c',
-        editable: true,
-        type: 'number'
-    },
-    {
         type: 'action',
         typeAttributes: { rowActions: actions, menuAlignment: 'right' }
     }

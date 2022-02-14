@@ -32,12 +32,6 @@
                     class="slds-modal slds-fade-in-open"
                 >
                     <div class="slds-modal__container modalBody">
-                        <template if:true={isUpdating}>
-                            <lightning-spinner
-                                alternative-text="Processing"
-                                size="large"
-                            ></lightning-spinner>
-                        </template>
                         <div class="slds-modal__header">
                             <h1
                                 id="modal-heading-01"
@@ -47,9 +41,15 @@
                             </h1>
                         </div>
                         <div
-                            class="slds-modal__content slds-p-around_medium"
+                            class="slds-modal__content slds-p-around_medium modalBody"
                             id="modal-content-id-1"
                         >
+                            <template if:true={isUpdating}>
+                                <lightning-spinner
+                                    alternative-text="Processing"
+                                    size="large"
+                                ></lightning-spinner>
+                            </template>
                             <div class="slds-grid slds-wrap">
                                 <div
                                     class="slds-col slds-size_6-of-12 slds-p-horizontal_x-small"
@@ -124,7 +124,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="slds-modal__footer">
+                        <div class="slds-modal__footer" if:false={isUpdating}>
                             <button
                                 class="slds-button slds-button_neutral"
                                 aria-label="Cancel and close"
