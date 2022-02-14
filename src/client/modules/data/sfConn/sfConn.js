@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 export const getDataFromSF = async () => {
     const options = {
         method: 'GET',
@@ -33,11 +34,17 @@ export const updateDataIntoSF = async (records) => {
         );
     } catch (error) {
         console.error('error: ', JSON.stringify(error));
+        alert('Failed to update : ', JSON.stringify(error));
     }
-    console.log('printing without strinigifting the resp.body', resp.body);
-    console.log('printing the resp body', JSON.stringify(resp.body));
-    let result = await resp.json();
+    let result = await resp.json(); //Doesn't have anything on res.body
     console.log('printing after resp.json', result);
+    if (Array.isArray(result) && result.length > 0) {
+        result.forEach((rec) => {
+            if (rec.success === false) {
+                throw new Error(rec.errors[0].message);
+            }
+        });
+    }
     // eslint-disable-next-line consistent-return
     return result;
 };
