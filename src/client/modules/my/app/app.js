@@ -8,9 +8,21 @@ const actions = [
     { label: 'Delete', name: 'delete' }
 ];
 const columns = [
-    { label: 'SolarBot Status Name', fieldName: 'Name' },
+    { label: 'SolarBot Status Name', fieldName: 'Name', editable: true },
     { label: 'SolarBot Name', fieldName: 'SolarBotName' },
     { label: 'Account Name', fieldName: 'SolarBotAccountName' },
+    {
+        label: 'Panel Temperature',
+        fieldName: 'Panel_Temperature__c',
+        editable: true,
+        type: 'number'
+    },
+    {
+        label: 'Kilowatt Hours',
+        fieldName: 'Kilowatt_Hours__c',
+        editable: true,
+        type: 'number'
+    },
     {
         type: 'action',
         typeAttributes: { rowActions: actions, menuAlignment: 'right' }

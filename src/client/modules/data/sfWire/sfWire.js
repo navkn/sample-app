@@ -18,9 +18,9 @@ export class getDataFromSFWire {
         this.connected = false;
     }
 
-    update(config) {
+    update() {
         if (this.connected) {
-            getDataFromSF(config && config.subRedditName)
+            getDataFromSF()
                 .then((resp) => this.dataCallback({ data: resp }))
                 .catch((err) => this.dataCallback({ error: err }));
         }
@@ -45,7 +45,7 @@ export class updateDataFromSFWire {
     }
 
     update(config) {
-        if (this.connected) {
+        if (this.connected && config.records.length > 0) {
             console.log('Config:', config);
             updateDataIntoSF(config)
                 .then((resp) => this.dataCallback({ data: resp }))

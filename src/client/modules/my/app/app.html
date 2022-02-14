@@ -20,6 +20,7 @@
                 data={result}
                 columns={columns}
                 onrowaction={handleRowAction}
+                suppress-bottom-bar
             >
             </lightning-datatable>
             <div if:true={editRecord}>
@@ -30,7 +31,13 @@
                     aria-modal="true"
                     class="slds-modal slds-fade-in-open"
                 >
-                    <div class="slds-modal__container">
+                    <div class="slds-modal__container modalBody">
+                        <template if:true={isUpdating}>
+                            <lightning-spinner
+                                alternative-text="Processing"
+                                size="large"
+                            ></lightning-spinner>
+                        </template>
                         <div class="slds-modal__header">
                             <h1
                                 id="modal-heading-01"
@@ -40,15 +47,9 @@
                             </h1>
                         </div>
                         <div
-                            class="slds-modal__content slds-p-around_medium modalBody"
+                            class="slds-modal__content slds-p-around_medium"
                             id="modal-content-id-1"
                         >
-                            <template if:true={isUpdating}>
-                                <lightning-spinner
-                                    alternative-text="Processing"
-                                    size="large"
-                                ></lightning-spinner>
-                            </template>
                             <div class="slds-grid slds-wrap">
                                 <div
                                     class="slds-col slds-size_6-of-12 slds-p-horizontal_x-small"
