@@ -156,6 +156,12 @@ export default class App extends LightningElement {
     handleMultipleSave(event) {
         console.log(event.detail.draftValues);
         console.log('draft', JSON.stringify(event.detail.draftValues));
+        console.log('Before pushing : ', this.recordsToUpdate);
+        let recordsToUpdate = event.detail.draftValues; //initialize an array
+        recordsToUpdate.push(this.recordToSave);
+        this.isUpdating = true;
+        this.recordsToUpdate = recordsToUpdate;
+        console.log('After pushing : ', this.recordsToUpdate);
     }
     showNotification(title, message, variant, mode) {
         // const evt = new ShowToastEvent({
