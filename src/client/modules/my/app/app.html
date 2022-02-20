@@ -20,7 +20,7 @@
                 data={result}
                 columns={columns}
                 onrowaction={handleRowAction}
-                suppress-bottom-bar
+                onsave={handleMultipleSave}
             >
             </lightning-datatable>
             <div if:true={editRecord}>

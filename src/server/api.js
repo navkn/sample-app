@@ -128,7 +128,7 @@ async function establishConnectionToSF() {
 async function queryDataFromSF() {
     console.log('Querying for records');
     let result = await conn.query(
-        'select Id,Kilowatt_Hours__c,Name,Panel_Temperature__c,Percent_Obscured__c,Status_Date__c,Maintenance_Requested__c,SolarBot__r.Name,SolarBot__r.Account__r.Name from SolarBot_Status__c order by SolarBot__r.Account__r.Name '
+        'select Id,Kilowatt_Hours__c,Name,Panel_Temperature__c,Percent_Obscured__c,Status_Date__c,Maintenance_Requested__c,SolarBot__r.Name,SolarBot__r.Account__r.Name from SolarBot_Status__c order by SolarBot__r.Account__c Limit 100 '
     );
     return result;
 }

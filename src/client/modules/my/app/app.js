@@ -153,6 +153,10 @@ export default class App extends LightningElement {
         return isValid;
     }
 
+    handleMultipleSave(event) {
+        console.log(event.detail.draftValues);
+        console.log('draft', JSON.stringify(event.detail.draftValues));
+    }
     showNotification(title, message, variant, mode) {
         // const evt = new ShowToastEvent({
         //     title: title,
