@@ -19,7 +19,7 @@ export class getDataFromSFWire {
     }
 
     update(config) {
-        if (this.connected && config.switcher) {
+        if (this.connected && config.switcher === true) {
             getDataFromSF()
                 .then((resp) => this.dataCallback({ data: resp }))
                 .catch((err) => this.dataCallback({ error: err }));

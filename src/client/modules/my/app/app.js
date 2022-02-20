@@ -45,6 +45,7 @@ export default class App extends LightningElement {
                 rec.SolarBotAccountName = rec.SolarBot__r.Account__r.Name;
             });
             this.result = records;
+            this.switcher = false;
         }
         if (error) {
             this.showNotification(
@@ -54,6 +55,7 @@ export default class App extends LightningElement {
                 'sticky'
             );
             this.result = {};
+            this.switcher = false;
         }
     }
     //error here
@@ -68,7 +70,7 @@ export default class App extends LightningElement {
                 'dismissible'
             );
             this.handleCancel();
-            this.switcher = this.switcher === true ? false : true;
+            this.switcher = true;
             this.isUpdating = false;
         }
         if (error) {
