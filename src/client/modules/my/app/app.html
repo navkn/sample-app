@@ -17,6 +17,7 @@
                 if:true={isDataAvailable}
                 key-field="Id"
                 show-row-number-column
+                hide-checkbox-column
                 data={result}
                 columns={columns}
                 onrowaction={handleRowAction}
@@ -141,6 +142,16 @@
                         </div>
                     </div>
                 </section>
+                <div
+                    class="slds-backdrop slds-backdrop_open"
+                    role="presentation"
+                ></div>
+            </div>
+            <div if:true={isUpdating}>
+                <lightning-spinner
+                    alternative-text="Loading the data from Org"
+                    size="large"
+                ></lightning-spinner>
                 <div
                     class="slds-backdrop slds-backdrop_open"
                     role="presentation"
