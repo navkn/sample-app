@@ -8,7 +8,9 @@ const jsforce = require('jsforce');
 const DIST_DIR = './dist';
 const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3001;
-
+const TIMEOUT = process.env.TIMEOUT || 60000;
+const SESSION_ID = process.env.TOKEN;
+const LOGIN_URL = process.env.LOGIN_URL;
 const app = express();
 
 var jwtToken;
@@ -51,24 +53,24 @@ app.post('/update', async (req, res) => {
     //     res.send('Still processing');
     //     console.log('request timed out at 10secs');
     // }); //50secs
-    res.setTimeout(60000, () => {
-        console.log('Response is timedout at 60sec');
-        if (!res.headersSent || !res.writableFinished) {
-            res.write("Processing more time So it's cancelled");
-            res.end(); //res.writeHead(202);//try with status set setheader instead of using setHeader
-        }
-    });
-    const space = ' ';
-    setTimeout(() => {
+    const timeInterval = setInterval(() => {
         if (!res.headersSent || !res.writableFinished) {
             console.log('writing the header just now');
             res.status(202); //res.writeHead(202);//try with status set setheader instead of using setHeader
-            res.write(space);
+            res.write(' '); //sending a whitespace
             console.log(
                 'wrote the header just now and sent the headers and space'
             );
         }
     }, 25000); //sending a whitespace to keep the connection alive at client
+    res.setTimeout(TIMEOUT, () => {
+        console.log('Response is timedout at 60sec');
+        if (!res.headersSent || !res.writableFinished) {
+            res.write("Processing more time So it's cancelled");
+            res.end(); //res.writeHead(202);//try with status set setheader instead of using setHeader
+            clearInterval(timeInterval);
+        }
+    });
     try {
         const results = await updateIntoSF(
             req.body.records,
@@ -76,14 +78,19 @@ app.post('/update', async (req, res) => {
         );
         res.write(JSON.stringify(results)); //res.send() -- >couldn't able to write data to the same response saying the headers have been already set
         res.end();
+        clearInterval(timeInterval);
         console.log('The result : ', JSON.stringify(results));
     } catch (error) {
         if (!res.headersSent || !res.writableFinished) {
             console.log('Error while processing the request');
             res.status(400).send(JSON.stringify(error)); //res.writeHead(202);//try with status set setheader instead of using setHeader
         } else {
-            console.error(JSON.stringify(error));
+            console.error(
+                'Received the error after the cancellation of process due to defined response timeout ',
+                JSON.stringify(error)
+            );
         }
+        clearInterval(timeInterval);
     }
 });
 
@@ -102,25 +109,33 @@ async function getAccessTokenFromJWT() {
             privateKey: process.env.PRIVATE_KEY
         });
     } catch (error) {
-        console.log('N@ Got an error while getting an access token', error);
+        console.log('Got an error while getting an access token', error);
     }
 }
 
 async function establishConnectionToSF() {
-    await getAccessTokenFromJWT();
-    try {
+    console.log(
+        `From env, the ID is: ${SESSION_ID}  and the URL is: ${LOGIN_URL}`
+    );
+    let url;
+    let accessToken;
+    if (SESSION_ID && LOGIN_URL) {
+        url = LOGIN_URL;
+        accessToken = SESSION_ID;
+    } else {
+        await getAccessTokenFromJWT();
         if (jwtToken) {
-            console.log(
-                'Got the access token ',
-                jwtToken.instance_url,
-                jwtToken.access_token
-            );
-            conn = new jsforce.Connection({
-                instanceUrl: jwtToken.instance_url,
-                accessToken: jwtToken.access_token
-            });
-            console.log('connection is succeeded');
+            url = jwtToken.instance_url;
+            accessToken = jwtToken.access_token;
         }
+    }
+    console.log(`From JWT, the URL is : ${url} and Token is ${accessToken}`);
+    try {
+        conn = new jsforce.Connection({
+            instanceUrl: url,
+            accessToken: accessToken
+        });
+        console.log('connection is succeeded');
     } catch (error) {
         console.log('Connection is failed', error);
     }
