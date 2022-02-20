@@ -2,7 +2,6 @@
 import { LightningElement, wire } from 'lwc';
 // eslint-disable-next-line @lwc/lwc/no-unknown-wire-adapters
 import { getDataFromSFWire, updateDataFromSFWire } from 'data/sfWire';
-import { refreshApex } from '@salesforce/apex';
 //import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 const actions = [
     { label: 'Edit', name: 'edit' },
@@ -29,10 +28,15 @@ export default class App extends LightningElement {
     editRecord;
     recordToSave;
     recordsToUpdate = [];
+    switcher = true;
     isUpdating = false;
     // eslint-disable-next-line @lwc/lwc/no-unknown-wire-adapters
-    @wire(getDataFromSFWire) getRecords({ data, error }) {
+    @wire(getDataFromSFWire, { switcher: '$switcher' }) getRecords({
+        data,
+        error
+    }) {
         console.log('Fetching the records');
+        this.result = undefined;
         if (data) {
             console.log('got data', data);
             let records = data.records;
@@ -49,6 +53,7 @@ export default class App extends LightningElement {
                 'error',
                 'sticky'
             );
+            this.result = {};
         }
     }
     //error here
@@ -63,9 +68,7 @@ export default class App extends LightningElement {
                 'dismissible'
             );
             this.handleCancel();
-            refreshApex(this.result)
-                .then(() => console.log('Refreshed successfully'))
-                .catch((err) => console.log('Errro while refreshing', err));
+            this.switcher = this.switcher === true ? false : true;
             this.isUpdating = false;
         }
         if (error) {
