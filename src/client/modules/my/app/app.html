@@ -7,14 +7,14 @@
         >
             <lightning-button label="Sync" slot="actions"></lightning-button>
 
-            <div if:false={result}>
+            <div if:false={isDataAvailable}>
                 <lightning-spinner
                     alternative-text="Loading the data from Org"
                     size="large"
                 ></lightning-spinner>
             </div>
             <lightning-datatable
-                if:true={result}
+                if:true={isDataAvailable}
                 key-field="Id"
                 show-row-number-column
                 data={result}

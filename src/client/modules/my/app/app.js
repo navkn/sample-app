@@ -28,15 +28,12 @@ export default class App extends LightningElement {
     editRecord;
     recordToSave;
     recordsToUpdate = [];
-    switcher = true;
+    isDataAvailable = false;
     isUpdating = false;
     // eslint-disable-next-line @lwc/lwc/no-unknown-wire-adapters
-    @wire(getDataFromSFWire, { switcher: '$switcher' }) getRecords({
-        data,
-        error
-    }) {
+    @wire(getDataFromSFWire, { isDataAvailable: '$isDataAvailable' })
+    getRecords({ data, error }) {
         console.log('Fetching the records');
-        this.result = undefined;
         if (data) {
             console.log('got data', data);
             let records = data.records;
@@ -45,7 +42,7 @@ export default class App extends LightningElement {
                 rec.SolarBotAccountName = rec.SolarBot__r.Account__r.Name;
             });
             this.result = records;
-            this.switcher = false;
+            this.isDataAvailable = true;
         }
         if (error) {
             this.showNotification(
@@ -55,7 +52,7 @@ export default class App extends LightningElement {
                 'sticky'
             );
             this.result = {};
-            this.switcher = false;
+            this.isDataAvailable = true;
         }
     }
     //error here
@@ -70,7 +67,7 @@ export default class App extends LightningElement {
                 'dismissible'
             );
             this.handleCancel();
-            this.switcher = true;
+            this.isDataAvailable = false; //Can't use refreshApex as it comes from another module @salesforce/apex
             this.isUpdating = false;
         }
         if (error) {
@@ -170,6 +167,7 @@ export default class App extends LightningElement {
         console.log('After pushing : ', this.recordsToUpdate);
     }
     showNotification(title, message, variant, mode) {
+        //can't use toast as this comes from another module lightning/platformShowToastEvent
         // const evt = new ShowToastEvent({
         //     title: title,
         //     message: message,
