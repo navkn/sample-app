@@ -2,6 +2,7 @@
 import { LightningElement, wire } from 'lwc';
 // eslint-disable-next-line @lwc/lwc/no-unknown-wire-adapters
 import { getDataFromSFWire, updateDataFromSFWire } from 'data/sfWire';
+import { refreshApex } from '@salesforce/apex';
 //import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 const actions = [
     { label: 'Edit', name: 'edit' },
@@ -62,6 +63,9 @@ export default class App extends LightningElement {
                 'dismissible'
             );
             this.handleCancel();
+            refreshApex(this.result)
+                .then(() => console.log('Refreshed successfully'))
+                .catch((err) => console.log('Errro while refreshing', err));
             this.isUpdating = false;
         }
         if (error) {
