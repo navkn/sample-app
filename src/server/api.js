@@ -102,7 +102,15 @@ app.get('/token', (req, resp) => {
     );
     resp.json('givingtheresponsebacktextasatoken');
 });
-app.post('');
+app.post('/token', (req, resp) => {
+    console.log(
+        'got the token access request',
+        req.body,
+        req.params,
+        req.headers
+    );
+    resp.json('givingtheresponsebacktextasatoken');
+});
 app.get('/signin', async () => {
     if (jwtToken === undefined) await establishConnectionToSF();
     else console.log('Token is already present', jwtToken);
