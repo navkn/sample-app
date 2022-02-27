@@ -2,11 +2,9 @@
     <div class="slds-m-horizontal_xx-large slds-m-top_medium">
         <!-- Wrapped with div as slds horizontal margin is not being applied for card -->
         <lightning-card
-            title="SolarBot Statuses from SF Org"
+            title="SolarBot Statuses from SOURCE Org"
             class="slds-text-align_center"
         >
-            <lightning-button label="Sync" slot="actions"></lightning-button>
-
             <div if:false={isDataAvailable}>
                 <lightning-spinner
                     alternative-text="Loading the data from Org"
