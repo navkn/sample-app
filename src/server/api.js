@@ -94,13 +94,9 @@ app.post('/update', async (req, res) => {
         clearInterval(timeInterval);
     }
 });
-app.get('/token', (req, resp) => {
-    console.log(
-        'got the token access request',
-        req.body,
-        req.params,
-        req.headers
-    );
+
+app.post('/token', (req, resp) => {
+    console.log('got the token access request from body', req.body.assertion);
     jsonWebToken.verify(
         req.body.assertion,
         process.env.PRIVATE_KEY,
@@ -109,10 +105,6 @@ app.get('/token', (req, resp) => {
             console.log('body ', body);
         }
     );
-    resp.json('givingtheresponsebacktextasatoken');
-});
-app.post('/token', (req, resp) => {
-    console.log('got the token access request from body', req.body.assertion);
     resp.json(
         '00D2w000003Ndfs!AQIAQOdu9MvIXstSKlE7WWv66OdASG_XrSkKAoo_IMyyh5y5Ajuz3M2gqKyRnxe8MuadkOBCT6ohgGXUYXPE9t8gpRAi0zVv'
     );
