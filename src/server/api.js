@@ -27,9 +27,12 @@ app.use(compression());
 // app.use(timeout('60000')); //uses 60secs as timeout
 app.get('/read', async (req, res) => {
     try {
-        let results = await queryDataFromSF();
-        res.json(results);
-        console.log('#records size : ', results.totalSize);
+        console.log('req', req.headers, req.body);
+        res.status(200).send('Success');
+        console.log(queryDataFromSF());
+        // let results = await queryDataFromSF();
+        // res.json(results);
+        // console.log('#records size : ', results.totalSize);
     } catch (error) {
         console.log('Uncaught exception', error);
     }
