@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const express = require('express');
 const { getToken } = require('sf-jwt-token');
 const jsforce = require('jsforce');
+const jsonWebToken = require('jsonwebtoken');
 // const timeout = require('connect-timeout');
 const DIST_DIR = './dist';
 const HOST = process.env.HOST || 'localhost';
@@ -100,16 +101,21 @@ app.get('/token', (req, resp) => {
         req.params,
         req.headers
     );
+    jsonWebToken.verify(
+        req.body.assertion,
+        process.env.PRIVATE_KEY,
+        (error, body) => {
+            console.log('error', error);
+            console.log('body ', body);
+        }
+    );
     resp.json('givingtheresponsebacktextasatoken');
 });
 app.post('/token', (req, resp) => {
-    console.log(
-        'got the token access request',
-        req.body,
-        req.params,
-        req.headers
+    console.log('got the token access request from body', req.body.assertion);
+    resp.json(
+        '00D2w000003Ndfs!AQIAQOdu9MvIXstSKlE7WWv66OdASG_XrSkKAoo_IMyyh5y5Ajuz3M2gqKyRnxe8MuadkOBCT6ohgGXUYXPE9t8gpRAi0zVv'
     );
-    resp.json('givingtheresponsebacktextasatoken');
 });
 app.get('/signin', async () => {
     if (jwtToken === undefined) await establishConnectionToSF();
