@@ -104,10 +104,15 @@ app.post('/token', (req, resp) => {
         (error, body) => {
             console.log('error', error);
             console.log('body ', body);
+            if (body) {
+                resp.status(200).send(
+                    '00D2w000003Ndfs!AQIAQOdu9MvIXstSKlE7WWv66OdASG_XrSkKAoo_IMyyh5y5Ajuz3M2gqKyRnxe8MuadkOBCT6ohgGXUYXPE9t8gpRAi0zVv'
+                );
+            }
+            if (error) {
+                resp.status(401).statusMessage('User not found');
+            }
         }
-    );
-    resp.json(
-        '00D2w000003Ndfs!AQIAQOdu9MvIXstSKlE7WWv66OdASG_XrSkKAoo_IMyyh5y5Ajuz3M2gqKyRnxe8MuadkOBCT6ohgGXUYXPE9t8gpRAi0zVv'
     );
 });
 app.get('/signin', async () => {
