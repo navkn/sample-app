@@ -100,6 +100,7 @@ app.post('/token', (req, resp) => {
     jsonWebToken.verify(
         req.body.assertion,
         process.env.PRIVATE_KEY,
+        { algorithms: ['RS256'] },
         (error, body) => {
             console.log('error', error);
             console.log('body ', body);
