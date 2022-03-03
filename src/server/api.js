@@ -99,7 +99,11 @@ app.post('/update', async (req, res) => {
 });
 
 app.post('/token', (req, resp) => {
-    console.log('got the token access request from body', req.body.assertion);
+    console.log(
+        'got the token access request from body',
+        req.body.assertion,
+        req.headers
+    );
     jsonWebToken.verify(
         req.body.assertion,
         process.env.PRIVATE_KEY,
