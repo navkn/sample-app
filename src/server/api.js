@@ -27,10 +27,13 @@ app.use(compression());
 // app.use(timeout('60000')); //uses 60secs as timeout
 app.get('/read', async (req, res) => {
     try {
-        console.log(
-            `read is called req headers is : ${req.headers} and req body is ${req.body}`
-        );
+        console.log('read req', req.headers, req.body);
         res.status(401).send('Error So retry for token as it got expired');
+        console.log(
+            `read is called req headers is : ${JSON.stringify(
+                req.headers
+            )} and req body is ${JSON.stringify(req.body)}`
+        );
         //res.status(200).send('Success');
         //console.log(queryDataFromSF());
         // let results = await queryDataFromSF();
@@ -103,8 +106,11 @@ app.post('/update', async (req, res) => {
 
 app.post('/token', (req, resp) => {
     console.log(
-        `token is called req headers is : ${req.headers} and req body is ${req.body}`
+        'got the token access request from body',
+        req.body.assertion,
+        req.headers
     );
+
     jsonWebToken.verify(
         req.body.assertion,
         process.env.PRIVATE_KEY,
@@ -122,6 +128,11 @@ app.post('/token', (req, resp) => {
                 resp.status(401).statusMessage('User not found'); //Use 401 only because named creds doesn't refresh the accesstoken automatically unless its 401
             }
         }
+    );
+    console.log(
+        `token is called req headers is : ${JSON.stringify(
+            req.headers
+        )} and req body is ${JSON.stringify(req.body)}`
     );
 });
 app.get('/signin', async () => {
