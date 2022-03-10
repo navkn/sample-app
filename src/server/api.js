@@ -27,9 +27,12 @@ app.use(compression());
 // app.use(timeout('60000')); //uses 60secs as timeout
 app.get('/read', async (req, res) => {
     try {
-        console.log('req', req.headers, req.body);
-        res.status(200).send('Success');
-        console.log(queryDataFromSF());
+        console.log(
+            `read is called req headers is : ${req.headers} and req body is ${req.body}`
+        );
+        res.status(401).send('Error So retry for token as it got expired');
+        //res.status(200).send('Success');
+        //console.log(queryDataFromSF());
         // let results = await queryDataFromSF();
         // res.json(results);
         // console.log('#records size : ', results.totalSize);
@@ -100,9 +103,7 @@ app.post('/update', async (req, res) => {
 
 app.post('/token', (req, resp) => {
     console.log(
-        'got the token access request from body',
-        req.body.assertion,
-        req.headers
+        `token is called req headers is : ${req.headers} and req body is ${req.body}`
     );
     jsonWebToken.verify(
         req.body.assertion,
@@ -118,7 +119,7 @@ app.post('/token', (req, resp) => {
                 });
             }
             if (error) {
-                resp.status(401).statusMessage('User not found');
+                resp.status(401).statusMessage('User not found'); //Use 401 only because named creds doesn't refresh the accesstoken automatically unless its 401
             }
         }
     );
@@ -169,13 +170,13 @@ async function establishConnectionToSF() {
         console.log('Connection is failed', error);
     }
 }
-async function queryDataFromSF() {
+/*async function queryDataFromSF() {
     console.log('Querying for records');
     let result = await conn.query(
         'select Id,Kilowatt_Hours__c,Name,Panel_Temperature__c,Percent_Obscured__c,Status_Date__c,Maintenance_Requested__c,SolarBot__r.Name,SolarBot__r.Account__r.Name from SolarBot_Status__c order by SolarBot__r.Account__c Limit 100 '
     );
     return result;
-}
+}*/
 
 async function insertIntoSF(records, sObjectType) {
     console.log('Inserting into sf', records, sObjectType);
