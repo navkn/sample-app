@@ -253,10 +253,22 @@ function auth(req, resp, next) {
         const accessToken = authToken.split(' ')[1];
         if (accessTokenType === 'Basic') {
             // password flow
-            console.log(
+            console.warn(
                 'Password and username from sf:',
                 Buffer.from(accessToken, 'base64').toString()
             );
+            const namePass = Buffer.from(accessToken, 'base64').toString();
+            const username = namePass.split(':')[0];
+            const password = namePass.split(':')[1];
+            if (username === 'admin' && password === 'admin') {
+                req.isValidUser = true;
+            } else {
+                return resp
+                    .status(401)
+                    .statusMessage(
+                        'Credentials are incorrect !! Please retry with correct credentials'
+                    );
+            }
         } else if (accessTokenType === 'Bearer') {
             //might be jwt flow as we built jwt conn else it could also be a oauth 2.0 flow
         }
