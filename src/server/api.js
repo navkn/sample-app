@@ -255,7 +255,7 @@ function auth(req, resp, next) {
             // password flow
             console.log(
                 'Password and username from sf:',
-                Buffer.from(accessToken, 'base64')
+                Buffer.from(accessToken, 'base64').toString()
             );
         } else if (accessTokenType === 'Bearer') {
             //might be jwt flow as we built jwt conn else it could also be a oauth 2.0 flow
