@@ -25,7 +25,8 @@ app.use(helmet({ crossOriginEmbedderPolicy: true }));
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 app.use(compression());
 // app.use(timeout('60000')); //uses 60secs as timeout
-app.get('/read', async (req, res) => {
+app.use(loggingMiddleware);
+app.get('/read', auth, async (req, res) => {
     try {
         console.log('read req', req.headers, req.body);
         res.status(401).send('Error So retry for token as it got expired');
@@ -106,9 +107,9 @@ app.post('/update', async (req, res) => {
 
 app.post('/token', (req, resp) => {
     console.log(
-        'got the token access request from body',
-        req.body.assertion,
-        req.headers
+        `got the request for accessToken in exchange of jwt token by passing it in the http body :${JSON.stringify(
+            req.body
+        )} and http headers are :${JSON.stringify(req.headers)}`
     );
 
     jsonWebToken.verify(
@@ -116,23 +117,22 @@ app.post('/token', (req, resp) => {
         process.env.PRIVATE_KEY,
         { algorithms: ['RS256'] },
         (error, body) => {
-            console.log('error', error);
-            console.log('body ', body);
             if (body) {
+                console.log(
+                    `Body after verifying the jwt:,${JSON.stringify(body)}`
+                );
                 resp.status(200).send({
                     access_token:
                         '00D2w000003Ndfs!AQIAQOdu9MvIXstSKlE7WWv66OdASG_XrSkKAoo_IMyyh5y5Ajuz3M2gqKyRnxe8MuadkOBCT6ohgGXUYXPE9t8gpRAi0zVv'
                 });
             }
             if (error) {
+                console.error(
+                    `error in verifying the jwt:, ${JSON.stringify(error)}`
+                );
                 resp.status(401).statusMessage('User not found'); //Use 401 only because named creds doesn't refresh the accesstoken automatically unless its 401
             }
         }
-    );
-    console.log(
-        `token is called req headers is : ${JSON.stringify(
-            req.headers
-        )} and req body is ${JSON.stringify(req.body)}`
     );
 });
 app.get('/signin', async () => {
@@ -221,7 +221,48 @@ async function updateIntoSF(records, sObjectType) {
     });
     return result;
 }
-
+function loggingMiddleware(req, resp, next) {
+    console.log(
+        `From logging middleware,content of http request are :  body :${JSON.stringify(
+            req.body
+        )} and  headers  :${JSON.stringify(
+            req.headers
+        )} and  params :${JSON.stringify(
+            req.params
+        )} and query :${JSON.stringify(req.query)}`
+    );
+    next(); //The next line will be called after all the middlewares executed as we are not returning here
+    console.log(
+        `From logging middleware,content of http response are :  body :${JSON.stringify(
+            resp.body
+        )} and  headers  :${JSON.stringify(
+            resp.headers
+        )} and  params :${JSON.stringify(resp.params)}`
+    );
+}
+function auth(req, resp, next) {
+    const authToken = req.headers.authorization;
+    if (!authToken) {
+        return resp
+            .status(401)
+            .statusMessage('Only Authorized people can access data');
+    }
+    // eslint-disable-next-line no-else-return
+    else {
+        const accessTokenType = authToken.split(' ')[0];
+        const accessToken = authToken.split(' ')[1];
+        if (accessTokenType === 'Basic') {
+            // password flow
+            console.log(
+                'Password and username from sf:',
+                Buffer.from(accessToken, 'base64')
+            );
+        } else if (accessTokenType === 'Bearer') {
+            //might be jwt flow as we built jwt conn else it could also be a oauth 2.0 flow
+        }
+        return next();
+    }
+}
 app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));
 // server.setTimeout(60000, () => {
 //     console.log('Server timeout and so socket will be closed ');
