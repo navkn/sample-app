@@ -26,7 +26,7 @@ app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 app.use(compression());
 // app.use(timeout('60000')); //uses 60secs as timeout
 app.use(loggingMiddleware);
-app.get('/read', auth, async (req, res) => {
+app.get('/read', async (req, res) => {
     try {
         let results = await queryDataFromSF();
         res.json(results);
@@ -47,7 +47,7 @@ app.get('/create', async (req, res) => {
     }
 });
 //response will be timedout by default after 30sec
-app.post('/update', async (req, res) => {
+app.post('/update', auth, async (req, res) => {
     console.log('Update request is received:');
     // req.setTimeout(10000, () => {
     //     req.clearTimeout();
@@ -176,6 +176,7 @@ async function queryDataFromSF() {
     let result = await conn.query(
         'select Id,Kilowatt_Hours__c,Name,Panel_Temperature__c,Percent_Obscured__c,Status_Date__c,Maintenance_Requested__c,SolarBot__r.Name,SolarBot__r.Account__r.Name from SolarBot_Status__c order by SolarBot__r.Account__c Limit 100 '
     );
+    console.log('N@', result);
     return result;
 }
 
