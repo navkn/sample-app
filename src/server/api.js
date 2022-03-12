@@ -28,18 +28,8 @@ app.use(compression());
 app.use(loggingMiddleware);
 app.get('/read', auth, async (req, res) => {
     try {
-        console.log('read req', req.headers, req.body);
-        res.status(401).send('Error So retry for token as it got expired');
-        console.log(
-            `read is called req headers is : ${JSON.stringify(
-                req.headers
-            )} and req body is ${JSON.stringify(req.body)}`
-        );
-        //res.status(200).send('Success');
-        //console.log(queryDataFromSF());
-        // let results = await queryDataFromSF();
-        // res.json(results);
-        // console.log('#records size : ', results.totalSize);
+        let results = await queryDataFromSF();
+        res.json(results);
     } catch (error) {
         console.log('Uncaught exception', error);
     }
@@ -181,13 +171,13 @@ async function establishConnectionToSF() {
         console.log('Connection is failed', error);
     }
 }
-/*async function queryDataFromSF() {
+async function queryDataFromSF() {
     console.log('Querying for records');
     let result = await conn.query(
         'select Id,Kilowatt_Hours__c,Name,Panel_Temperature__c,Percent_Obscured__c,Status_Date__c,Maintenance_Requested__c,SolarBot__r.Name,SolarBot__r.Account__r.Name from SolarBot_Status__c order by SolarBot__r.Account__c Limit 100 '
     );
     return result;
-}*/
+}
 
 async function insertIntoSF(records, sObjectType) {
     console.log('Inserting into sf', records, sObjectType);
