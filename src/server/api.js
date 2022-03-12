@@ -26,7 +26,7 @@ app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 app.use(compression());
 // app.use(timeout('60000')); //uses 60secs as timeout
 app.use(loggingMiddleware);
-app.get('/read', async (req, res) => {
+app.get('/read', auth, async (req, res) => {
     try {
         let results = await queryDataFromSF();
         res.json(results);
@@ -261,7 +261,8 @@ function auth(req, resp, next) {
         } else if (accessTokenType === 'Bearer') {
             //might be jwt flow as we built jwt conn else it could also be a oauth 2.0 flow
         }
-        return next();
+        next();
+        return null;
     }
 }
 app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));
