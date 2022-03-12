@@ -233,9 +233,7 @@ function loggingMiddleware(req, resp, next) {
 function auth(req, resp, next) {
     const authToken = req.headers.authorization;
     if (!authToken) {
-        return resp
-            .status(401)
-            .statusMessage('Only Authorized people can access data');
+        return resp.status(401).send('Only Authorized people can access data');
     }
     // eslint-disable-next-line no-else-return
     else {
@@ -255,7 +253,7 @@ function auth(req, resp, next) {
             } else {
                 return resp
                     .status(401)
-                    .statusMessage(
+                    .send(
                         'Credentials are incorrect !! Please retry with correct credentials'
                     );
             }
