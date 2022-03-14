@@ -31,7 +31,7 @@ app.get('/read', auth, async (req, res) => {
         let results = await queryDataFromSF();
         res.json(results);
     } catch (error) {
-        console.log('Uncaught exception', error);
+        console.warn('Uncaught exception', error);
     }
 });
 
@@ -43,7 +43,7 @@ app.get('/create', async (req, res) => {
         console.log('Inserted successfully', results.length);
         res.json(results);
     } catch (error) {
-        console.log('Error while inserting record', error);
+        console.warn('Error while inserting record', error);
     }
 });
 //response will be timedout by default after 30sec
@@ -83,10 +83,10 @@ app.post('/update', auth, async (req, res) => {
         console.log('The result : ', JSON.stringify(results));
     } catch (error) {
         if (!res.headersSent || !res.writableFinished) {
-            console.log('Error while processing the request');
+            console.warn('Error while processing the request');
             res.status(400).send(JSON.stringify(error)); //res.writeHead(202);//try with status set setheader instead of using setHeader
         } else {
-            console.error(
+            console.warn(
                 'Received the error after the cancellation of process due to defined response timeout ',
                 JSON.stringify(error)
             );
@@ -140,7 +140,7 @@ async function getAccessTokenFromJWT() {
             privateKey: process.env.PRIVATE_KEY
         });
     } catch (error) {
-        console.log('Got an error while getting an access token', error);
+        console.warn('Got an error while getting an access token', error);
     }
 }
 
@@ -168,7 +168,7 @@ async function establishConnectionToSF() {
         });
         console.log('connection is succeeded');
     } catch (error) {
-        console.log('Connection is failed', error);
+        console.warn('Connection is failed', error);
     }
 }
 async function queryDataFromSF() {
@@ -176,7 +176,6 @@ async function queryDataFromSF() {
     let result = await conn.query(
         'select Id,Kilowatt_Hours__c,Name,Panel_Temperature__c,Percent_Obscured__c,Status_Date__c,Maintenance_Requested__c,SolarBot__r.Name,SolarBot__r.Account__r.Name from SolarBot_Status__c order by SolarBot__r.Account__c Limit 100 '
     );
-    console.log('N@', result);
     return result;
 }
 
@@ -263,6 +262,7 @@ function auth(req, resp, next) {
         }
         next();
         return null;
+        // return next(); //Its not working as expected because it retunrs immediately here
     }
 }
 app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));
