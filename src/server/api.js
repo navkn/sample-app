@@ -5,6 +5,7 @@ const express = require('express');
 const { getToken } = require('sf-jwt-token');
 const jsforce = require('jsforce');
 const jsonWebToken = require('jsonwebtoken');
+const https = require('https');
 // const timeout = require('connect-timeout');
 const DIST_DIR = './dist';
 const HOST = process.env.HOST || 'localhost';
@@ -230,7 +231,7 @@ function loggingMiddleware(req, resp, next) {
         )} and  params :${JSON.stringify(resp.params)}`
     );
 }
-function auth(req, resp, next) {
+async function auth(req, resp, next) {
     const authToken = req.headers.authorization;
     if (!authToken) {
         return resp.status(401).send('Only Authorized people can access data');
@@ -259,11 +260,55 @@ function auth(req, resp, next) {
             }
         } else if (accessTokenType === 'Bearer') {
             //might be jwt flow as we built jwt conn else it could also be a oauth 2.0 flow
+            console.warn(
+                'access Token from sf might be using oauth or jwt:',
+                accessToken
+            );
+            let isValid = await checkForTokenValidity();
+            if (!isValid) {
+                return resp.status(401).send('Token expired');
+            }
         }
         next();
         return null;
         // return next(); //Its not working as expected because it retunrs immediately here
     }
+}
+
+async function checkForTokenValidity() {
+    const userInfoURL = 'https://login.salesforce.com/services/oauth2/userinfo';
+    https
+        .get(userInfoURL, (res) => {
+            console.log('statusCode:', res.statusCode);
+            console.log('headers:', res.headers);
+
+            let responseData = '';
+            let headers = res.headers;
+
+            res.on('data', function (chunk) {
+                responseData += chunk;
+            });
+
+            res.on('end', () => {
+                res.destroy();
+                if (
+                    headers['content-type'] &&
+                    headers['content-type'].indexOf('application/json') !== -1
+                ) {
+                    try {
+                        responseData = JSON.parse(responseData);
+                    } catch (error) {
+                        console.log('Error while parsing the data', error);
+                        return false;
+                    }
+                }
+                console.log('responseData is ', JSON.stringify(responseData));
+                return true;
+            });
+        })
+        .on('error', (e) => {
+            console.error(e, ' while querying for userinfo');
+        });
 }
 app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));
 // server.setTimeout(60000, () => {
