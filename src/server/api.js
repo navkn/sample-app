@@ -264,10 +264,11 @@ async function auth(req, resp, next) {
                 'access Token from sf might be using oauth or jwt:',
                 accessToken
             );
-            let isValid = await checkForTokenValidity(accessToken);
-            if (!isValid) {
-                return resp.status(401).send('Token expired');
-            }
+            await checkForTokenValidity(accessToken);
+            // let isValid = await checkForTokenValidity(accessToken);
+            // if (!isValid) {
+            //     return resp.status(401).send('Token expired');
+            // }
         }
         next();
         return null;
@@ -277,8 +278,11 @@ async function auth(req, resp, next) {
 
 async function checkForTokenValidity(accessToken) {
     const userInfoURL = 'https://login.salesforce.com/services/oauth2/userinfo';
+    const bearerToken = 'Bearer ' + accessToken;
     const options = {
-        Authorization: 'Bearer ' + accessToken
+        headers: {
+            Authorization: bearerToken
+        }
     };
     https
         .get(userInfoURL, options, (res) => {
