@@ -231,7 +231,7 @@ function loggingMiddleware(req, resp, next) {
         )} and  params :${JSON.stringify(resp.params)}`
     );
 }
-async function auth(req, resp, next) {
+function auth(req, resp, next) {
     const authToken = req.headers.authorization;
     if (!authToken) {
         return resp.status(401).send('Only Authorized people can access data');
@@ -251,6 +251,7 @@ async function auth(req, resp, next) {
             const password = namePass.split(':')[1];
             if (username === 'admin' && password === 'admin') {
                 req.isValidUser = true;
+                next();
             } else {
                 return resp
                     .status(401)
@@ -264,59 +265,105 @@ async function auth(req, resp, next) {
                 'access Token from sf might be using oauth or jwt:',
                 accessToken
             );
-            await checkForTokenValidity(accessToken);
+            const userInfoURL =
+                'https://login.salesforce.com/services/oauth2/userinfo';
+            const options = {
+                headers: {
+                    Authorization: authToken
+                }
+            };
+            https
+                .get(userInfoURL, options, (res) => {
+                    let responseData = '';
+                    res.on('data', function (chunk) {
+                        responseData += chunk;
+                    });
+                    res.on('end', () => {
+                        res.destroy();
+                        console.log(
+                            'responseData is ',
+                            JSON.stringify(responseData)
+                        );
+                        try {
+                            responseData = JSON.parse(responseData);
+                            if (responseData) {
+                                req.instanceUrl =
+                                    responseData.urls.custom_domain;
+                                console.log(
+                                    'instance url is :',
+                                    responseData.urls.custom_domain
+                                );
+                                next();
+                            }
+                        } catch (error) {
+                            console.error(
+                                'Error while parsing the data',
+                                error
+                            );
+                        }
+                    });
+                })
+                .on('error', (e) => {
+                    console.error(e, ' while querying for userinfo');
+                    return resp.status(401).send('Refresh the token');
+                });
+            // checkForTokenValidity(accessToken);
             // let isValid = await checkForTokenValidity(accessToken);
             // if (!isValid) {
             //     return resp.status(401).send('Token expired');
             // }
         }
-        next();
         return null;
         // return next(); //Its not working as expected because it retunrs immediately here
     }
 }
 
-async function checkForTokenValidity(accessToken) {
-    const userInfoURL = 'https://login.salesforce.com/services/oauth2/userinfo';
-    const bearerToken = 'Bearer ' + accessToken;
-    const options = {
-        headers: {
-            Authorization: bearerToken
-        }
-    };
-    https
-        .get(userInfoURL, options, (res) => {
-            console.log('statusCode:', res.statusCode);
-            console.log('headers:', res.headers);
+// async function checkForTokenValidity(accessToken) {
+// const userInfoURL = 'https://login.salesforce.com/services/oauth2/userinfo';
+// const bearerToken = 'Bearer ' + accessToken;
+// const options = {
+//     headers: {
+//         Authorization: bearerToken
+//     }
+// };
+// https
+//     .get(userInfoURL, options, (res) => {
+//         console.log('statusCode:', res.statusCode);
+//         console.log('headers:', res.headers);
 
-            let responseData = '';
-            let headers = res.headers;
+//         let responseData = '';
+//         let headers = res.headers;
 
-            res.on('data', function (chunk) {
-                responseData += chunk;
-            });
+//         res.on('data', function (chunk) {
+//             responseData += chunk;
+//         });
 
-            res.on('end', () => {
-                res.destroy();
-                if (
-                    headers['content-type'] &&
-                    headers['content-type'].indexOf('application/json') !== -1
-                ) {
-                    try {
-                        responseData = JSON.parse(responseData);
-                    } catch (error) {
-                        console.log('Error while parsing the data', error);
-                        return false;
-                    }
-                }
-                console.log('responseData is ', JSON.stringify(responseData));
-                return true;
-            });
-        })
-        .on('error', (e) => {
-            console.error(e, ' while querying for userinfo');
-        });
-}
+//         res.on('end', () => {
+//             res.destroy();
+//             if (
+//                 headers['content-type'] &&
+//                 headers['content-type'].indexOf('application/json') !== -1
+//             ) {
+//                 try {
+//                     responseData = JSON.parse(responseData);
+//                 } catch (error) {
+//                     console.log('Error while parsing the data', error);
+//                     return false;
+//                 }
+//             }
+//             console.log('responseData is ', JSON.stringify(responseData));
+//             return true;
+//         });
+//     })
+//     .on('error', (e) => {
+//         console.error(e, ' while querying for userinfo');
+//         return resp
+//                 .status(401)
+//                 .send(
+//                     'Credentials are incorrect !! Please retry with correct credentials'
+//                 );
+//     });
+// }
 app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));
 // server.setTimeout(60000, () => {
 //     console.log('Server timeout and so socket will be closed ');
