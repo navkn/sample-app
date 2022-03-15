@@ -284,28 +284,33 @@ function auth(req, resp, next) {
                             'responseData is ',
                             JSON.stringify(responseData)
                         );
-                        try {
-                            responseData = JSON.parse(responseData);
-                            if (responseData) {
-                                req.instanceUrl =
-                                    responseData.urls.custom_domain;
-                                console.log(
-                                    'instance url is :',
-                                    responseData.urls.custom_domain
+                        if (res.statusCode === 200) {
+                            try {
+                                responseData = JSON.parse(responseData);
+                                if (responseData) {
+                                    req.instanceUrl =
+                                        responseData.urls.custom_domain;
+                                    console.log(
+                                        'instance url is :',
+                                        responseData.urls.custom_domain
+                                    );
+                                    next();
+                                }
+                            } catch (error) {
+                                console.error(
+                                    'Error while parsing the data',
+                                    error
                                 );
-                                next();
                             }
-                        } catch (error) {
-                            console.error(
-                                'Error while parsing the data',
-                                error
-                            );
+                        } else {
+                            return resp.status(401).send('Refresh the token');
                         }
+                        return null;
                     });
                 })
                 .on('error', (e) => {
                     console.error(e, ' while querying for userinfo');
-                    return resp.status(401).send('Refresh the token');
+                    return resp.status(501).send(e.message);
                 });
             // checkForTokenValidity(accessToken);
             // let isValid = await checkForTokenValidity(accessToken);
