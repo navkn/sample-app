@@ -290,11 +290,18 @@ function auth(req, resp, next) {
                                 if (responseData) {
                                     req.instanceUrl =
                                         responseData.urls.custom_domain;
-                                    console.log(
-                                        'instance url is :',
-                                        responseData.urls.custom_domain
-                                    );
-                                    next();
+                                    //Trying to acceptt the request to be processed only from sf org
+                                    /*if(req.instanceUrl === LOGIN_URL){
+                                            console.log(
+                                                'instance url is :',
+                                                responseData.urls.custom_domain
+                                            );
+                                            next();
+                                        }
+                                        else{
+                                            console.error('Request from other domains are not acceptable');
+                                            return resp.status(403).send('Forbidden request');
+                                        }*/
                                 }
                             } catch (error) {
                                 console.error(
@@ -323,52 +330,52 @@ function auth(req, resp, next) {
     }
 }
 
-// async function checkForTokenValidity(accessToken) {
-// const userInfoURL = 'https://login.salesforce.com/services/oauth2/userinfo';
-// const bearerToken = 'Bearer ' + accessToken;
-// const options = {
-//     headers: {
-//         Authorization: bearerToken
-//     }
-// };
-// https
-//     .get(userInfoURL, options, (res) => {
-//         console.log('statusCode:', res.statusCode);
-//         console.log('headers:', res.headers);
+/*async function checkForTokenValidity(accessToken) {
+const userInfoURL = 'https://login.salesforce.com/services/oauth2/userinfo';
+const bearerToken = 'Bearer ' + accessToken;
+const options = {
+    headers: {
+        Authorization: bearerToken
+    }
+};
+https
+    .get(userInfoURL, options, (res) => {
+        console.log('statusCode:', res.statusCode);
+        console.log('headers:', res.headers);
 
-//         let responseData = '';
-//         let headers = res.headers;
+        let responseData = '';
+        let headers = res.headers;
 
-//         res.on('data', function (chunk) {
-//             responseData += chunk;
-//         });
+        res.on('data', function (chunk) {
+            responseData += chunk;
+        });
 
-//         res.on('end', () => {
-//             res.destroy();
-//             if (
-//                 headers['content-type'] &&
-//                 headers['content-type'].indexOf('application/json') !== -1
-//             ) {
-//                 try {
-//                     responseData = JSON.parse(responseData);
-//                 } catch (error) {
-//                     console.log('Error while parsing the data', error);
-//                     return false;
-//                 }
-//             }
-//             console.log('responseData is ', JSON.stringify(responseData));
-//             return true;
-//         });
-//     })
-//     .on('error', (e) => {
-//         console.error(e, ' while querying for userinfo');
-//         return resp
-//                 .status(401)
-//                 .send(
-//                     'Credentials are incorrect !! Please retry with correct credentials'
-//                 );
-//     });
-// }
+        res.on('end', () => {
+            res.destroy();
+            if (
+                headers['content-type'] &&
+                headers['content-type'].indexOf('application/json') !== -1
+            ) {
+                try {
+                    responseData = JSON.parse(responseData);
+                } catch (error) {
+                    console.log('Error while parsing the data', error);
+                    return false;
+                }
+            }
+            console.log('responseData is ', JSON.stringify(responseData));
+            return true;
+        });
+    })
+    .on('error', (e) => {
+        console.error(e, ' while querying for userinfo');
+        return resp
+                .status(401)
+                .send(
+                    'Credentials are incorrect !! Please retry with correct credentials'
+                );
+    });
+}*/
 app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));
 // server.setTimeout(60000, () => {
 //     console.log('Server timeout and so socket will be closed ');
