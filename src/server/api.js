@@ -281,9 +281,16 @@ function auth(req, resp, next) {
                     res.on('end', () => {
                         res.destroy();
                         console.log(
+                            `From userInfo,content of http response are :  body :${JSON.stringify(
+                                res.body
+                            )} and  headers  :${JSON.stringify(
+                                res.headers
+                            )} and  params :${JSON.stringify(res.params)}`
+                        );
+                        console.log(
                             'response data is: ' + JSON.stringify(responseData)
                         );
-                        responseData = JSON.parse(responseData);
+                        // responseData = JSON.parse(responseData);
                         // console.log(
                         //     'custom domain url from responseData is ',
                         //     responseData.urls.custom_domain
