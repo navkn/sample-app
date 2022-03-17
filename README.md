@@ -25,7 +25,9 @@ Now consider a workbench scenario where it performs the data updates as that log
 If the req is coming out of the configured urls then also it needs to start processing the request.
 But the req should contain a SessionID which is validated and also that requesting person should have the necessary scopes attached onto that user.
 If the server doesn't have any sessionId or invalid then the request results in the error.
-/org/orgID/service/service_name/Operation_name?params_key=value -->jwtToken config between your micro-services as jwt is not suitable between diff platforms as it requires additional config, storing of cert on both platforms. Oauth is better as the both relys on same provider.
+/api/org/orgID/service/service_name/Operation_name?params_key=value -->jwtToken config between your
+/ui/Operation_name?params_key=value
+micro-services as jwt is not suitable between diff platforms as it requires additional config, storing of cert on both platforms. Oauth is better as the both relys on same provider.
 
 What I have learnt in this project
 1.Learnt about the connected apps
