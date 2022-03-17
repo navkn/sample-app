@@ -280,15 +280,15 @@ function auth(req, resp, next) {
                     });
                     res.on('end', () => {
                         res.destroy();
-                        responseData = JSON.parse(responseData);
                         console.log(
-                            'custom domain url from responseData is ',
-                            responseData.urls.custom_domain
+                            'response data is: ' + JSON.stringify(responseData)
                         );
-                        if (
-                            res.statusCode === 200 &&
-                            responseData.urls.custom_domain
-                        ) {
+                        responseData = JSON.parse(responseData);
+                        // console.log(
+                        //     'custom domain url from responseData is ',
+                        //     responseData.urls.custom_domain
+                        // );
+                        if (res.statusCode === 200) {
                             try {
                                 next();
                                 //Trying to acceptt the request to be processed only from sf org
