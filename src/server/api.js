@@ -151,16 +151,15 @@ async function establishConnectionToSF() {
     );
     let url;
     let accessToken;
-    if (SESSION_ID && LOGIN_URL) {
+    if (!SESSION_ID || !jwtToken) {
+        await getAccessTokenFromJWT();
+        url = jwtToken.instance_url;
+        accessToken = jwtToken.access_token;
+    } else {
         url = LOGIN_URL;
         accessToken = SESSION_ID;
-    } else {
-        await getAccessTokenFromJWT();
-        if (jwtToken) {
-            url = jwtToken.instance_url;
-            accessToken = jwtToken.access_token;
-        }
     }
+
     console.log(`From JWT, the URL is : ${url} and Token is ${accessToken}`);
     try {
         conn = new jsforce.Connection({
@@ -290,6 +289,7 @@ function auth(req, resp, next) {
                         console.log(
                             'response data is: ' + JSON.stringify(responseData)
                         );
+                        console.log('resp status codeis :', res.statusCode);
                         // responseData = JSON.parse(responseData);
                         // console.log(
                         //     'custom domain url from responseData is ',
