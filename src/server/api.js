@@ -282,9 +282,9 @@ function auth(req, resp, next) {
                         res.destroy();
                         console.warn(
                             'custom domain url from responseData is ',
-                            responseData.urls.custom_domain
+                            responseData
                         );
-                        if (res.statusCode === 200) {
+                        if (res.statusCode === 200 && responseData !== '') {
                             try {
                                 next();
                                 //Trying to acceptt the request to be processed only from sf org
