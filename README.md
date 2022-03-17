@@ -39,3 +39,4 @@ To do in this project:
 build the Heroku pipeline
 Make the project able to run perfectly in a local server environment
 Make this server able to meet the above requirement
+able to refresh the jwt token automatically instead of redeploying if there is any error while retrieving the jwtToken

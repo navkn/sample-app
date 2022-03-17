@@ -280,29 +280,30 @@ function auth(req, resp, next) {
                     });
                     res.on('end', () => {
                         res.destroy();
-                        console.log(
-                            'responseData is ',
-                            JSON.stringify(responseData)
+                        console.warn(
+                            'custom domain url from responseData is ',
+                            responseData.urls.custom_domain
                         );
                         if (res.statusCode === 200) {
                             try {
-                                responseData = JSON.parse(responseData);
-                                if (responseData) {
-                                    req.instanceUrl =
-                                        responseData.urls.custom_domain;
-                                    //Trying to acceptt the request to be processed only from sf org
-                                    /*if(req.instanceUrl === LOGIN_URL){
-                                            console.log(
-                                                'instance url is :',
-                                                responseData.urls.custom_domain
-                                            );
-                                            next();
-                                        }
-                                        else{
-                                            console.error('Request from other domains are not acceptable');
-                                            return resp.status(403).send('Forbidden request');
-                                        }*/
-                                }
+                                next();
+                                //Trying to acceptt the request to be processed only from sf org
+                                // responseData = JSON.parse(responseData);
+                                // if (responseData) {
+                                //     req.instanceUrl =
+                                //         responseData.urls.custom_domain;
+                                //     if(req.instanceUrl === LOGIN_URL){
+                                //             console.log(
+                                //                 'instance url is :',
+                                //                 responseData.urls.custom_domain
+                                //             );
+                                //             next();
+                                //         }
+                                //         else{
+                                //             console.error('Request from other domains are not acceptable');
+                                //             return resp.status(403).send('Forbidden request');
+                                //         }
+                                // }
                             } catch (error) {
                                 console.error(
                                     'Error while parsing the data',
