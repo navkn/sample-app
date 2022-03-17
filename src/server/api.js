@@ -32,7 +32,7 @@ app.get('/read', auth, async (req, res) => {
         let results = await queryDataFromSF();
         res.json(results);
     } catch (error) {
-        console.warn('Uncaught exception', error);
+        console.log('Uncaught exception', error);
     }
 });
 
@@ -44,7 +44,7 @@ app.get('/create', async (req, res) => {
         console.log('Inserted successfully', results.length);
         res.json(results);
     } catch (error) {
-        console.warn('Error while inserting record', error);
+        console.log('Error while inserting record', error);
     }
 });
 //response will be timedout by default after 30sec
@@ -84,10 +84,10 @@ app.post('/update', auth, async (req, res) => {
         console.log('The result : ', JSON.stringify(results));
     } catch (error) {
         if (!res.headersSent || !res.writableFinished) {
-            console.warn('Error while processing the request');
+            console.log('Error while processing the request');
             res.status(400).send(JSON.stringify(error)); //res.writeHead(202);//try with status set setheader instead of using setHeader
         } else {
-            console.warn(
+            console.log(
                 'Received the error after the cancellation of process due to defined response timeout ',
                 JSON.stringify(error)
             );
@@ -141,7 +141,7 @@ async function getAccessTokenFromJWT() {
             privateKey: process.env.PRIVATE_KEY
         });
     } catch (error) {
-        console.warn('Got an error while getting an access token', error);
+        console.log('Got an error while getting an access token', error);
     }
 }
 
@@ -169,7 +169,7 @@ async function establishConnectionToSF() {
         });
         console.log('connection is succeeded');
     } catch (error) {
-        console.warn('Connection is failed', error);
+        console.log('Connection is failed', error);
     }
 }
 async function queryDataFromSF() {
@@ -242,7 +242,7 @@ function auth(req, resp, next) {
         const accessToken = authToken.split(' ')[1];
         if (accessTokenType === 'Basic') {
             // password flow
-            console.warn(
+            console.log(
                 'Password and username from sf:',
                 Buffer.from(accessToken, 'base64').toString()
             );
@@ -261,7 +261,7 @@ function auth(req, resp, next) {
             }
         } else if (accessTokenType === 'Bearer') {
             //might be jwt flow as we built jwt conn else it could also be a oauth 2.0 flow
-            console.warn(
+            console.log(
                 'access Token from sf might be using oauth or jwt:',
                 accessToken
             );
@@ -280,15 +280,18 @@ function auth(req, resp, next) {
                     });
                     res.on('end', () => {
                         res.destroy();
-                        console.warn(
+                        responseData = JSON.parse(responseData);
+                        console.log(
                             'custom domain url from responseData is ',
-                            responseData
+                            responseData.urls.custom_domain
                         );
-                        if (res.statusCode === 200 && responseData !== '') {
+                        if (
+                            res.statusCode === 200 &&
+                            responseData.urls.custom_domain
+                        ) {
                             try {
                                 next();
                                 //Trying to acceptt the request to be processed only from sf org
-                                // responseData = JSON.parse(responseData);
                                 // if (responseData) {
                                 //     req.instanceUrl =
                                 //         responseData.urls.custom_domain;
