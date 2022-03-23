@@ -48,7 +48,7 @@ app.get('/create', async (req, res) => {
     }
 });
 //response will be timedout by default after 30sec
-app.post('api/update', auth, async (req, res) => {
+/*app.post('api/update', auth, async (req, res) => {
     console.log('Update request is received:');
     // req.setTimeout(10000, () => {
     //     req.clearTimeout();
@@ -94,7 +94,7 @@ app.post('api/update', auth, async (req, res) => {
         }
         clearInterval(timeInterval);
     }
-});
+});*/
 
 app.post('update', auth, async (req, res) => {
     console.log('Update request is received for org :');
