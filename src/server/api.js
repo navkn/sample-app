@@ -96,7 +96,7 @@ app.post('api/update', auth, async (req, res) => {
     }
 });
 
-app.post('org/update', auth, async (req, res) => {
+app.post('update', auth, async (req, res) => {
     console.log('Update request is received for org :');
     const timeInterval = setInterval(() => {
         if (!res.headersSent || !res.writableFinished) {
@@ -117,11 +117,12 @@ app.post('org/update', auth, async (req, res) => {
         }
     });
     try {
-        console.log('typeof records', typeof req.body.records);
-        const results = await updateIntoSF(
-            req.body.records,
-            req.body.sObjectType
-        );
+        let data = req.body;
+        console.log('typeof records', typeof data);
+        if (data.attributes) {
+            delete data.attributes;
+        }
+        const results = await updateIntoSF(data.records, data.sObjectType);
         res.write(JSON.stringify(results)); //res.send() -- >couldn't able to write data to the same response saying the headers have been already set
         res.end();
         clearInterval(timeInterval);
