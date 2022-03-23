@@ -12,7 +12,7 @@ Find more information on the main repo on [GitHub](https://github.com/muenzpraeg
 
 Project Info:
 
-Process request only from specified endpoint urls-->
+Process requests only from specified endpoint urls
 How workbench processes requests
 This server is setup with a user configured with jwtToken Exchange and processses all the requests as that Integration user
 This server needs to either accept the requests from multiple orgs.
@@ -36,6 +36,7 @@ What I have learnt in this project
 4.How to pick the correct flow according to the senarios
 5.Hands-on creating the LWC-OSS app
 6.Created apex timeout execution error and handling it by a batch considering the server bounded to a criteria like each request results in handling of multiple sub-requests processing in separate threads where the responses are queued up.
+7.concepts of cors
 
 To do in this project:
 build the Heroku pipeline
