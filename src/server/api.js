@@ -117,7 +117,7 @@ app.post('org/update', auth, async (req, res) => {
         }
     });
     try {
-        console.log('typeof records', req.body.records);
+        console.log('typeof records', typeof req.body.records);
         const results = await updateIntoSF(
             req.body.records,
             req.body.sObjectType
