@@ -48,7 +48,7 @@ app.get('/create', async (req, res) => {
     }
 });
 //response will be timedout by default after 30sec
-app.post('/update', auth, async (req, res) => {
+app.post('api/update', auth, async (req, res) => {
     console.log('Update request is received:');
     // req.setTimeout(10000, () => {
     //     req.clearTimeout();
@@ -78,6 +78,51 @@ app.post('/update', auth, async (req, res) => {
             req.body.records,
             req.body.sObjectType
         );
+        res.write(JSON.stringify(results)); //res.send() -- >couldn't able to write data to the same response saying the headers have been already set
+        res.end();
+        clearInterval(timeInterval);
+        console.log('The result : ', JSON.stringify(results));
+    } catch (error) {
+        if (!res.headersSent || !res.writableFinished) {
+            console.log('Error while processing the request');
+            res.status(400).send(JSON.stringify(error)); //res.writeHead(202);//try with status set setheader instead of using setHeader
+        } else {
+            console.log(
+                'Received the error after the cancellation of process due to defined response timeout ',
+                JSON.stringify(error)
+            );
+        }
+        clearInterval(timeInterval);
+    }
+});
+
+app.post('update', auth, async (req, res) => {
+    console.log('Update request is received for org :');
+    const timeInterval = setInterval(() => {
+        if (!res.headersSent || !res.writableFinished) {
+            console.log('writing the header just now');
+            res.status(202); //res.writeHead(202);//try with status set setheader instead of using setHeader
+            res.write(' '); //sending a whitespace
+            console.log(
+                'wrote the header just now and sent the headers and space'
+            );
+        }
+    }, 25000); //sending a whitespace to keep the connection alive at client
+    res.setTimeout(TIMEOUT, () => {
+        console.log('Response is timedout at 60sec');
+        if (!res.headersSent || !res.writableFinished) {
+            res.write("Processing more time So it's cancelled");
+            res.end(); //res.writeHead(202);//try with status set setheader instead of using setHeader
+            clearInterval(timeInterval);
+        }
+    });
+    try {
+        let data = req.body;
+        console.log('typeof records', typeof data);
+        if (data.attributes) {
+            delete data.attributes;
+        }
+        const results = await updateIntoSF(data.records, data.sObjectType);
         res.write(JSON.stringify(results)); //res.send() -- >couldn't able to write data to the same response saying the headers have been already set
         res.end();
         clearInterval(timeInterval);
