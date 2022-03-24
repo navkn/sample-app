@@ -48,7 +48,7 @@ app.get('/create', async (req, res) => {
     }
 });
 //response will be timedout by default after 30sec
-app.post('/api/update', auth, async (req, res) => {
+/*app.post('/api/update', auth, async (req, res) => {
     console.log('Update request is received:');
     // req.setTimeout(10000, () => {
     //     req.clearTimeout();
@@ -94,9 +94,9 @@ app.post('/api/update', auth, async (req, res) => {
         }
         clearInterval(timeInterval);
     }
-});
+});*/
 
-app.post('/org/update', auth, async (req, res) => {
+app.post('/update', auth, async (req, res) => {
     console.log('Update request is received for org :');
     const timeInterval = setInterval(() => {
         if (!res.headersSent || !res.writableFinished) {
@@ -118,14 +118,16 @@ app.post('/org/update', auth, async (req, res) => {
     });
     try {
         let data = req.body;
-        console.log('typeof records', typeof data);
-        if (data.attributes) {
-            delete data.attributes;
-            console.log(
-                'records data after deleting the attributes property is :',
-                JSON.stringify(data)
-            );
-        }
+        // console.log('typeof records', typeof data);
+        // if (data.attributes) {
+        //     delete data.attributes;
+        //     console.log(
+        //         'records data after deleting the attributes property is :',
+        //         JSON.stringify(data)
+        //     );
+        // }
+        processRecords(data.records, data.sObjectType);
+        console.log('After processing the new values are :', data.records);
         const results = await updateIntoSF(data.records, data.sObjectType);
         res.write(JSON.stringify(results)); //res.send() -- >couldn't able to write data to the same response saying the headers have been already set
         res.end();
@@ -436,6 +438,19 @@ https
                 );
     });
 }*/
+
+function processRecords(records, recordType) {
+    if (
+        recordType === 'SolarBot_Status__c' &&
+        Array.isArray(records) &&
+        records.length > 0
+    ) {
+        records.forEach((rec) => {
+            rec.Panel_Temperature__c =
+                parseInt(rec.Panel_Temperature__c, 10) + 1; //10 indicateds the decimanl number system for the incoming value
+        });
+    }
+}
 app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));
 // server.setTimeout(60000, () => {
 //     console.log('Server timeout and so socket will be closed ');
