@@ -11,7 +11,7 @@ app.use(helmet());
 app.use(compression());
 
 const HOST = process.env.HOST;
-const PORT = process.env.PORT1;
+const PORT = process.env.PORT;
 const DIST_DIR = './dist';
 
 app.use(express.static(DIST_DIR));

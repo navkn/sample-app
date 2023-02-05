@@ -1,9 +1,8 @@
-// Simple Express server setup to serve for local testing/dev API server
-const dotenv = require('dotenv');
-dotenv.config();
 const compression = require('compression');
 const helmet = require('helmet');
 const express = require('express');
+const path = require('path');
+
 const { getToken } = require('sf-jwt-token');
 const jsforce = require('jsforce');
 const jsonWebToken = require('jsonwebtoken');
@@ -16,19 +15,22 @@ const TIMEOUT = process.env.TIMEOUT;
 const SESSION_ID = process.env.TOKEN;
 const LOGIN_URL = process.env.LOGIN_URL;
 const app = express();
+app.use(helmet());
+app.use(compression());
+app.use(express.static(DIST_DIR));
 
 let jwtToken;
 let conn;
 establishConnectionToSF();
 app.use(express.json()); //available in new release of express else need to use body-parser
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(DIST_DIR)); //appends the dist folder to the root
-app.use(helmet());
 app.use(helmet({ crossOriginEmbedderPolicy: true }));
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
-app.use(compression());
 // app.use(timeout('60000')); //uses 60secs as timeout
 app.use(loggingMiddleware);
+app.use('/main', (req, res) => {
+    res.sendFile(path.resolve(DIST_DIR, 'index.html'));
+});
 app.get('/read', auth, async (req, res) => {
     try {
         let results = await queryDataFromSF();
@@ -49,55 +51,6 @@ app.get('/create', async (req, res) => {
         console.log('Error while inserting record', error);
     }
 });
-//response will be timedout by default after 30sec
-/*app.post('/api/update', auth, async (req, res) => {
-    console.log('Update request is received:');
-    // req.setTimeout(10000, () => {
-    //     req.clearTimeout();
-    //     res.send('Still processing');
-    //     console.log('request timed out at 10secs');
-    // }); //50secs
-    const timeInterval = setInterval(() => {
-        if (!res.headersSent || !res.writableFinished) {
-            console.log('writing the header just now');
-            res.status(202); //res.writeHead(202);//try with status set setheader instead of using setHeader
-            res.write(' '); //sending a whitespace
-            console.log(
-                'wrote the header just now and sent the headers and space'
-            );
-        }
-    }, 25000); //sending a whitespace to keep the connection alive at client
-    res.setTimeout(TIMEOUT, () => {
-        console.log('Response is timedout at 60sec');
-        if (!res.headersSent || !res.writableFinished) {
-            res.write("Processing more time So it's cancelled");
-            res.end(); //res.writeHead(202);//try with status set setheader instead of using setHeader
-            clearInterval(timeInterval);
-        }
-    });
-    try {
-        const results = await updateIntoSF(
-            req.body.records,
-            req.body.sObjectType
-        );
-        res.write(JSON.stringify(results)); //res.send() -- >couldn't able to write data to the same response saying the headers have been already set
-        res.end();
-        clearInterval(timeInterval);
-        console.log('The result : ', JSON.stringify(results));
-    } catch (error) {
-        if (!res.headersSent || !res.writableFinished) {
-            console.log('Error while processing the request');
-            res.status(400).send(JSON.stringify(error)); //res.writeHead(202);//try with status set setheader instead of using setHeader
-        } else {
-            console.log(
-                'Received the error after the cancellation of process due to defined response timeout ',
-                JSON.stringify(error)
-            );
-        }
-        clearInterval(timeInterval);
-    }
-});*/
-
 app.post('/update', auth, async (req, res) => {
     console.log('Update request is received for org :');
     const timeInterval = setInterval(() => {
@@ -343,30 +296,9 @@ function auth(req, resp, next) {
                             'response data is: ' + JSON.stringify(responseData)
                         );
                         console.log('resp status codeis :', res.statusCode);
-                        // responseData = JSON.parse(responseData);
-                        // console.log(
-                        //     'custom domain url from responseData is ',
-                        //     responseData.urls.custom_domain
-                        // );
                         if (res.statusCode === 200) {
                             try {
                                 next();
-                                //Trying to acceptt the request to be processed only from sf org
-                                // if (responseData) {
-                                //     req.instanceUrl =
-                                //         responseData.urls.custom_domain;
-                                //     if(req.instanceUrl === LOGIN_URL){
-                                //             console.log(
-                                //                 'instance url is :',
-                                //                 responseData.urls.custom_domain
-                                //             );
-                                //             next();
-                                //         }
-                                //         else{
-                                //             console.error('Request from other domains are not acceptable');
-                                //             return resp.status(403).send('Forbidden request');
-                                //         }
-                                // }
                             } catch (error) {
                                 console.error(
                                     'Error while parsing the data',
@@ -383,63 +315,11 @@ function auth(req, resp, next) {
                     console.error(e, ' while querying for userinfo');
                     return resp.status(501).send(e.message);
                 });
-            // checkForTokenValidity(accessToken);
-            // let isValid = await checkForTokenValidity(accessToken);
-            // if (!isValid) {
-            //     return resp.status(401).send('Token expired');
-            // }
         }
         return null;
         // return next(); //Its not working as expected because it retunrs immediately here
     }
 }
-
-/*async function checkForTokenValidity(accessToken) {
-const userInfoURL = 'https://login.salesforce.com/services/oauth2/userinfo';
-const bearerToken = 'Bearer ' + accessToken;
-const options = {
-    headers: {
-        Authorization: bearerToken
-    }
-};
-https
-    .get(userInfoURL, options, (res) => {
-        console.log('statusCode:', res.statusCode);
-        console.log('headers:', res.headers);
-
-        let responseData = '';
-        let headers = res.headers;
-
-        res.on('data', function (chunk) {
-            responseData += chunk;
-        });
-
-        res.on('end', () => {
-            res.destroy();
-            if (
-                headers['content-type'] &&
-                headers['content-type'].indexOf('application/json') !== -1
-            ) {
-                try {
-                    responseData = JSON.parse(responseData);
-                } catch (error) {
-                    console.log('Error while parsing the data', error);
-                    return false;
-                }
-            }
-            console.log('responseData is ', JSON.stringify(responseData));
-            return true;
-        });
-    })
-    .on('error', (e) => {
-        console.error(e, ' while querying for userinfo');
-        return resp
-                .status(401)
-                .send(
-                    'Credentials are incorrect !! Please retry with correct credentials'
-                );
-    });
-}*/
 
 function processRecords(records, recordType) {
     if (
@@ -455,6 +335,3 @@ function processRecords(records, recordType) {
 }
 console.log('about to listen for the server');
 app.listen(PORT, () => console.log(`✅  API Server started:${HOST}:${PORT} `));
-// server.setTimeout(60000, () => {
-//     console.log('Server timeout and so socket will be closed ');
-// });//doesn't handle the h12 error
