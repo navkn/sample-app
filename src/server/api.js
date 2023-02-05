@@ -1,4 +1,6 @@
 // Simple Express server setup to serve for local testing/dev API server
+const dotenv = require('dotenv');
+dotenv.config();
 const compression = require('compression');
 const helmet = require('helmet');
 const express = require('express');
@@ -8,15 +10,15 @@ const jsonWebToken = require('jsonwebtoken');
 const https = require('https');
 // const timeout = require('connect-timeout');
 const DIST_DIR = './dist';
-const HOST = process.env.HOST || 'localhost';
-const PORT = process.env.PORT || 3001;
-const TIMEOUT = process.env.TIMEOUT || 60000;
+const HOST = process.env.HOST;
+const PORT = process.env.PORT2;
+const TIMEOUT = process.env.TIMEOUT;
 const SESSION_ID = process.env.TOKEN;
 const LOGIN_URL = process.env.LOGIN_URL;
 const app = express();
 
-var jwtToken;
-var conn;
+let jwtToken;
+let conn;
 establishConnectionToSF();
 app.use(express.json()); //available in new release of express else need to use body-parser
 app.use(express.urlencoded({ extended: true }));

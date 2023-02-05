@@ -8,6 +8,7 @@
         "@salesforce-ux/design-system": "^2.13.7",
         "compression": "^1.7.4",
         "connect-timeout": "^1.9.0",
+        "dotenv": "^16.0.3",
         "express": "^4.17.1",
         "helmet": "^4.1.1",
         "http-delayed-response": "^0.0.4",
